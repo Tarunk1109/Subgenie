@@ -22,6 +22,14 @@ export const viewProtect = async (req, res, next) => {
   }
 };
 
+export const viewAdminOnly = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    res.redirect("/dashboard");
+  }
+};
+
 export const injectUser = async (req, res, next) => {
   const token = req.cookies?.token;
   if (token) {

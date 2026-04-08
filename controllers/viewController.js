@@ -10,17 +10,17 @@ function getMonthStart() {
 }
 
 export const renderLanding = (req, res) => {
-  res.render("landing", { user: req.user || null });
+  res.render("pages/landing", { user: req.user || null, pageTitle: "Home" });
 };
 
 export const renderLogin = (req, res) => {
   if (req.cookies?.token) return res.redirect("/dashboard");
-  res.render("login", { error: null });
+  res.render("pages/login", { error: null, pageTitle: "Login", user: null });
 };
 
 export const renderRegister = (req, res) => {
   if (req.cookies?.token) return res.redirect("/dashboard");
-  res.render("register", { error: null });
+  res.render("pages/register", { error: null, pageTitle: "Sign Up", user: null });
 };
 
 export const handleLogin = async (req, res) => {
@@ -28,12 +28,12 @@ export const handleLogin = async (req, res) => {
 
   const user = await User.findOne({ email: email?.toLowerCase() });
   if (!user) {
-    return res.render("login", { error: "Invalid email or password" });
+    return res.render("pages/login", { error: "Invalid email or password", pageTitle: "Login", user: null });
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return res.render("login", { error: "Invalid email or password" });
+    return res.render("pages/login", { error: "Invalid email or password", pageTitle: "Login", user: null });
   }
 
   const token = generateToken(user._id);
@@ -49,20 +49,18 @@ export const handleRegister = async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
   if (!name || !email || !password) {
-    return res.render("register", { error: "All fields are required" });
+    return res.render("pages/register", { error: "All fields are required", pageTitle: "Sign Up", user: null });
   }
   if (password.length < 6) {
-    return res.render("register", {
-      error: "Password must be at least 6 characters",
-    });
+    return res.render("pages/register", { error: "Password must be at least 6 characters", pageTitle: "Sign Up", user: null });
   }
   if (password !== confirmPassword) {
-    return res.render("register", { error: "Passwords do not match" });
+    return res.render("pages/register", { error: "Passwords do not match", pageTitle: "Sign Up", user: null });
   }
 
   const existing = await User.findOne({ email: email.toLowerCase() });
   if (existing) {
-    return res.render("register", { error: "Email already registered" });
+    return res.render("pages/register", { error: "Email already registered", pageTitle: "Sign Up", user: null });
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -118,8 +116,9 @@ export const renderDashboard = async (req, res) => {
     .sort("-date")
     .limit(5);
 
-  res.render("dashboard", {
+  res.render("pages/dashboard", {
     user: req.user,
+    pageTitle: "Dashboard",
     totalSubs,
     totalMonthlySpend: totalMonthlySpend.toFixed(2),
     usesThisMonth,
@@ -134,9 +133,35 @@ export const renderSubscriptions = async (req, res) => {
   const userId = req.user._id;
   const monthStart = getMonthStart();
 
-  const subscriptions = await Subscription.find({ user: userId }).sort(
-    "-createdAt"
-  );
+  const q = req.query.q || "";
+  const categoryFilter = req.query.category || "";
+  const billingCycleFilter = req.query.billingCycle || "";
+  const sortParam = req.query.sort || "newest";
+  const page = Math.max(1, parseInt(req.query.page) || 1);
+  const pageSize = 8;
+
+  const filter = { user: userId };
+  if (q) filter.name = { $regex: q, $options: "i" };
+  if (categoryFilter) filter.category = { $regex: `^${categoryFilter}$`, $options: "i" };
+  if (billingCycleFilter) filter.billingCycle = billingCycleFilter;
+
+  const sortMap = {
+    newest: "-createdAt",
+    oldest: "createdAt",
+    "name-asc": "name",
+    "name-desc": "-name",
+    "cost-asc": "cost",
+    "cost-desc": "-cost",
+  };
+  const sortValue = sortMap[sortParam] || "-createdAt";
+
+  const totalCount = await Subscription.countDocuments(filter);
+  const totalPages = Math.ceil(totalCount / pageSize) || 1;
+
+  const subscriptions = await Subscription.find(filter)
+    .sort(sortValue)
+    .skip((page - 1) * pageSize)
+    .limit(pageSize);
 
   const subsWithUsage = await Promise.all(
     subscriptions.map(async (sub) => {
@@ -149,7 +174,21 @@ export const renderSubscriptions = async (req, res) => {
     })
   );
 
-  res.render("subscriptions", { user: req.user, subscriptions: subsWithUsage });
+  const allCategories = await Subscription.distinct("category", { user: userId });
+
+  res.render("pages/subscriptions", {
+    user: req.user,
+    pageTitle: "Subscriptions",
+    subscriptions: subsWithUsage,
+    allCategories,
+    q,
+    categoryFilter,
+    billingCycleFilter,
+    sortParam,
+    currentPage: page,
+    totalPages,
+    totalCount,
+  });
 };
 
 export const renderUsage = async (req, res) => {
@@ -169,7 +208,7 @@ export const renderUsage = async (req, res) => {
     subscription: subscriptionId,
   }).sort("-date");
 
-  res.render("usage", { user: req.user, subscription, logs });
+  res.render("pages/usage", { user: req.user, pageTitle: subscription.name + " — Usage", subscription, logs });
 };
 
 export const renderInsights = async (req, res) => {
@@ -227,9 +266,85 @@ export const renderInsights = async (req, res) => {
     .reduce((sum, i) => sum + parseFloat(i.monthlyCost), 0)
     .toFixed(2);
 
-  res.render("insights", {
+  res.render("pages/insights", {
     user: req.user,
+    pageTitle: "Insights",
     insights,
     potentialSavings,
   });
+};
+
+export const renderProfile = (req, res) => {
+  res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: null });
+};
+
+export const handleUpdateProfile = async (req, res) => {
+  const { name, email, password, confirmPassword } = req.body;
+
+  if (!name || !name.trim()) {
+    return res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: "Name is required" });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!email || !emailRegex.test(email)) {
+    return res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: "Valid email is required" });
+  }
+
+  if (password) {
+    if (password.length < 6) {
+      return res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: "Password must be at least 6 characters" });
+    }
+    if (password !== confirmPassword) {
+      return res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: "Passwords do not match" });
+    }
+  }
+
+  const existingEmail = await User.findOne({ email: email.toLowerCase(), _id: { $ne: req.user._id } });
+  if (existingEmail) {
+    return res.render("pages/profile", { user: req.user, pageTitle: "Profile", success: null, error: "Email already in use by another account" });
+  }
+
+  const user = await User.findById(req.user._id);
+  user.name = name.trim();
+  user.email = email.toLowerCase();
+
+  if (password) {
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+  }
+
+  await user.save();
+  const updatedUser = await User.findById(req.user._id).select("-password");
+
+  res.render("pages/profile", { user: updatedUser, pageTitle: "Profile", success: "Profile updated successfully", error: null });
+};
+
+export const renderAdmin = async (req, res) => {
+  const users = await User.find().select("-password").sort("-createdAt");
+
+  const usersWithCount = await Promise.all(
+    users.map(async (u) => {
+      const subCount = await Subscription.countDocuments({ user: u._id });
+      return { ...u.toObject(), subCount };
+    })
+  );
+
+  res.render("pages/admin", {
+    user: req.user,
+    pageTitle: "Admin",
+    users: usersWithCount,
+    success: req.query.success || null,
+  });
+};
+
+export const handleUpdateUserRole = async (req, res) => {
+  const { role } = req.body;
+  const { userId } = req.params;
+
+  if (!["user", "admin"].includes(role)) {
+    return res.redirect("/admin");
+  }
+
+  await User.findByIdAndUpdate(userId, { role });
+  res.redirect("/admin?success=Role+updated+successfully");
 };

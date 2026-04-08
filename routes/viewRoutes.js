@@ -10,8 +10,12 @@ import {
   renderSubscriptions,
   renderUsage,
   renderInsights,
+  renderProfile,
+  handleUpdateProfile,
+  renderAdmin,
+  handleUpdateUserRole,
 } from "../controllers/viewController.js";
-import { viewProtect, injectUser } from "../middleware/viewAuthMiddleware.js";
+import { viewProtect, viewAdminOnly, injectUser } from "../middleware/viewAuthMiddleware.js";
 
 const router = express.Router();
 
@@ -26,5 +30,9 @@ router.get("/dashboard", viewProtect, renderDashboard);
 router.get("/subscriptions", viewProtect, renderSubscriptions);
 router.get("/usage/:subscriptionId", viewProtect, renderUsage);
 router.get("/insights", viewProtect, renderInsights);
+router.get("/profile", viewProtect, renderProfile);
+router.post("/profile", viewProtect, handleUpdateProfile);
+router.get("/admin", viewProtect, viewAdminOnly, renderAdmin);
+router.post("/admin/role/:userId", viewProtect, viewAdminOnly, handleUpdateUserRole);
 
 export default router;

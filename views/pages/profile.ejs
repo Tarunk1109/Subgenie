@@ -1,0 +1,108 @@
+<div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <div class="mb-6">
+    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Profile</h1>
+    <p class="text-slate-500 text-sm">Manage your account settings</p>
+  </div>
+
+  <!-- Profile Header -->
+  <div class="bg-white rounded-lg border border-slate-200 p-5 mb-4 flex items-center gap-4">
+    <div class="w-14 h-14 rounded-full bg-brand-600 flex items-center justify-center text-xl font-bold text-white uppercase"><%= user.name.charAt(0) %></div>
+    <div>
+      <h2 class="text-lg font-semibold text-slate-900"><%= user.name %></h2>
+      <p class="text-sm text-slate-500"><%= user.email %></p>
+      <span class="inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium <%= user.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600' %>"><%= user.role %></span>
+    </div>
+  </div>
+
+  <% if (success) { %>
+    <div class="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-md"><%= success %></div>
+  <% } %>
+  <% if (error) { %>
+    <div class="mb-4 p-3 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-md"><%= error %></div>
+  <% } %>
+
+  <!-- Edit Form -->
+  <div class="bg-white rounded-lg border border-slate-200 p-5">
+    <h3 class="text-sm font-semibold text-slate-900 mb-4">Edit Profile</h3>
+    <form id="profileForm" action="/profile" method="POST" novalidate class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Full Name</label>
+        <input type="text" name="name" id="profileName" value="<%= user.name %>" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm" />
+        <p id="errProfileName" class="text-xs text-rose-600 mt-1 hidden"></p>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Email Address</label>
+        <input type="email" name="email" id="profileEmail" value="<%= user.email %>" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm" />
+        <p id="errProfileEmail" class="text-xs text-rose-600 mt-1 hidden"></p>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">New Password <span class="text-slate-400 font-normal">(leave blank to keep current)</span></label>
+        <input type="password" name="password" id="profilePassword" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm" placeholder="At least 6 characters" />
+        <p id="errProfilePassword" class="text-xs text-rose-600 mt-1 hidden"></p>
+        <div id="strengthBar" class="hidden mt-2">
+          <div class="w-full bg-slate-200 rounded-full h-1.5">
+            <div id="strengthFill" class="h-1.5 rounded-full transition-all" style="width: 0%"></div>
+          </div>
+          <p id="strengthLabel" class="text-xs mt-1 text-slate-400"></p>
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-slate-600 mb-1">Confirm New Password</label>
+        <input type="password" name="confirmPassword" id="profileConfirmPassword" class="w-full px-3 py-2 border border-slate-300 rounded-md text-sm" placeholder="Repeat password" />
+        <p id="errProfileConfirm" class="text-xs text-rose-600 mt-1 hidden"></p>
+      </div>
+      <button type="submit" class="px-6 py-2 bg-brand-600 text-white text-sm font-semibold rounded-md hover:bg-brand-500 transition">Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  const pw = document.getElementById('profilePassword');
+  const bar = document.getElementById('strengthBar');
+  const fill = document.getElementById('strengthFill');
+  const label = document.getElementById('strengthLabel');
+
+  pw.addEventListener('input', function() {
+    const v = pw.value;
+    if (!v) { bar.classList.add('hidden'); return; }
+    bar.classList.remove('hidden');
+    let score = 0;
+    if (v.length >= 8) score++;
+    if (/[A-Z]/.test(v)) score++;
+    if (/[0-9]/.test(v)) score++;
+    if (/[^A-Za-z0-9]/.test(v)) score++;
+    const levels = [
+      { w: '25%', c: 'bg-rose-500', t: 'Weak' },
+      { w: '50%', c: 'bg-amber-500', t: 'Fair' },
+      { w: '75%', c: 'bg-yellow-500', t: 'Good' },
+      { w: '100%', c: 'bg-emerald-500', t: 'Strong' },
+    ];
+    const l = levels[Math.max(0, score - 1)] || levels[0];
+    fill.style.width = l.w;
+    fill.className = 'h-1.5 rounded-full transition-all ' + l.c;
+    label.textContent = l.t;
+  });
+
+  document.getElementById('profileForm').addEventListener('submit', function(e) {
+    let ok = true;
+    ['errProfileName','errProfileEmail','errProfilePassword','errProfileConfirm'].forEach(id => {
+      document.getElementById(id).classList.add('hidden');
+    });
+
+    const name = document.getElementById('profileName').value.trim();
+    const email = document.getElementById('profileEmail').value.trim();
+    const pass = document.getElementById('profilePassword').value;
+    const confirm = document.getElementById('profileConfirmPassword').value;
+
+    if (!name) { show('errProfileName', 'Name is required'); ok = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { show('errProfileEmail', 'Enter a valid email'); ok = false; }
+    if (pass && pass.length < 6) { show('errProfilePassword', 'Minimum 6 characters'); ok = false; }
+    if (pass && pass !== confirm) { show('errProfileConfirm', 'Passwords do not match'); ok = false; }
+
+    if (!ok) e.preventDefault();
+  });
+
+  function show(id, msg) { const el = document.getElementById(id); el.textContent = msg; el.classList.remove('hidden'); }
+})();
+</script>

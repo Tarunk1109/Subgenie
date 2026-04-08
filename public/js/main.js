@@ -49,11 +49,38 @@ function closeModal() {
 }
 
 async function handleSubscriptionForm(form) {
+  ["errName", "errCost", "errCategory"].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add("hidden");
+  });
+
+  const nameVal = document.getElementById("subName").value.trim();
+  const costVal = document.getElementById("subCost").value;
+  const catVal = document.getElementById("subCategory").value.trim();
+  let valid = true;
+
+  if (!nameVal) {
+    const el = document.getElementById("errName");
+    if (el) { el.textContent = "Name is required"; el.classList.remove("hidden"); }
+    valid = false;
+  }
+  if (!costVal || isNaN(Number(costVal)) || Number(costVal) < 0) {
+    const el = document.getElementById("errCost");
+    if (el) { el.textContent = "Enter a valid cost"; el.classList.remove("hidden"); }
+    valid = false;
+  }
+  if (!catVal) {
+    const el = document.getElementById("errCategory");
+    if (el) { el.textContent = "Category is required"; el.classList.remove("hidden"); }
+    valid = false;
+  }
+  if (!valid) return;
+
   const id = document.getElementById("editSubId").value;
   const data = {
-    name: document.getElementById("subName").value,
-    cost: Number(document.getElementById("subCost").value),
-    category: document.getElementById("subCategory").value,
+    name: nameVal,
+    cost: Number(costVal),
+    category: catVal,
     billingCycle: document.getElementById("subCycle").value,
   };
 
