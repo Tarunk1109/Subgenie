@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SubGenie — <%= typeof pageTitle !== 'undefined' ? pageTitle : 'Subscription Intelligence' %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased">
+  <nav class="bg-slate-900 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-14 items-center">
+        <a href="/" class="flex items-center gap-2 text-lg font-bold text-white tracking-tight">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+          SubGenie
+        </a>
+        <div class="flex items-center gap-1">
+          <% if (typeof user !== 'undefined' && user) { %>
+            <% const currentPage = typeof pageTitle !== 'undefined' ? pageTitle : ''; %>
+            <a href="/dashboard" class="px-3 py-1.5 text-sm font-medium rounded-md transition <%= currentPage === 'Dashboard' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:text-white hover:bg-slate-800' %>">Dashboard</a>
+            <a href="/subscriptions" class="px-3 py-1.5 text-sm font-medium rounded-md transition <%= currentPage === 'Subscriptions' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:text-white hover:bg-slate-800' %>">Subscriptions</a>
+            <a href="/insights" class="px-3 py-1.5 text-sm font-medium rounded-md transition <%= currentPage === 'Insights' ? 'bg-slate-800 text-white' : 'text-slate-300 hover:text-white hover:bg-slate-800' %>">Insights</a>
+            <div class="w-px h-5 bg-slate-700 mx-2"></div>
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold text-white uppercase"><%= user.name.charAt(0) %></div>
+              <span class="text-sm text-slate-400 hidden sm:inline"><%= user.name %></span>
+            </div>
+            <a href="/logout" class="ml-2 px-3 py-1.5 text-sm font-medium text-slate-400 hover:text-rose-400 rounded-md transition">Logout</a>
+          <% } else { %>
+            <a href="/login" class="px-3 py-1.5 text-sm font-medium text-slate-300 hover:text-white rounded-md transition">Login</a>
+            <a href="/register" class="ml-1 px-4 py-1.5 bg-brand-600 text-white text-sm font-medium rounded-md hover:bg-brand-500 transition">Sign Up</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <main class="flex-1">

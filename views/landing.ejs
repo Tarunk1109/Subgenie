@@ -1,0 +1,98 @@
+<%- include('partials/header', { pageTitle: 'Home' }) %>
+
+<section class="bg-slate-900 -mt-px">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+    <div class="text-center">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-600/10 border border-brand-500/20 text-brand-300 text-xs font-medium mb-6">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+        AI-Powered Subscription Intelligence
+      </div>
+      <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        Know exactly what your<br/>subscriptions <span class="text-brand-400">cost you</span>
+      </h1>
+      <p class="mt-4 text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        Track every subscription, measure real usage, and get AI-driven recommendations to eliminate waste. Web dashboard + Telegram bot.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+        <% if (typeof user !== 'undefined' && user) { %>
+          <a href="/dashboard" class="px-6 py-2.5 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-500 transition text-sm">
+            Go to Dashboard
+          </a>
+        <% } else { %>
+          <a href="/register" class="px-6 py-2.5 bg-brand-600 text-white font-semibold rounded-lg hover:bg-brand-500 transition text-sm">
+            Get Started Free
+          </a>
+          <a href="/login" class="px-6 py-2.5 bg-slate-800 text-slate-300 font-semibold rounded-lg border border-slate-700 hover:border-slate-600 hover:text-white transition text-sm">
+            Sign In
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-16">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl font-bold text-slate-900 tracking-tight">How it works</h2>
+      <p class="mt-2 text-sm text-slate-500">Three steps to take control of recurring expenses</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="bg-white p-6 rounded-lg border border-slate-200 card-hover">
+        <div class="w-8 h-8 bg-brand-50 text-brand-600 rounded-md flex items-center justify-center text-sm font-bold mb-4">1</div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Add Subscriptions</h3>
+        <p class="text-sm text-slate-500 leading-relaxed">Track Netflix, Spotify, gym, SaaS tools -- anything with a recurring cost.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-slate-200 card-hover">
+        <div class="w-8 h-8 bg-emerald-50 text-emerald-600 rounded-md flex items-center justify-center text-sm font-bold mb-4">2</div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Log Usage</h3>
+        <p class="text-sm text-slate-500 leading-relaxed">Record when you use each service. One click on web, or via Telegram bot.</p>
+      </div>
+      <div class="bg-white p-6 rounded-lg border border-slate-200 card-hover">
+        <div class="w-8 h-8 bg-amber-50 text-amber-600 rounded-md flex items-center justify-center text-sm font-bold mb-4">3</div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Get Insights</h3>
+        <p class="text-sm text-slate-500 leading-relaxed">AI analyzes cost-per-use and recommends what to keep, downgrade, or cancel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="py-16 bg-white border-t border-slate-100">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+      <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Capabilities</h2>
+    </div>
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-5 rounded-lg border border-slate-100">
+        <div class="text-brand-600 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Cost Tracking</h3>
+        <p class="text-xs text-slate-500">Monthly spend breakdown by category.</p>
+      </div>
+      <div class="p-5 rounded-lg border border-slate-100">
+        <div class="text-emerald-600 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Usage Analytics</h3>
+        <p class="text-xs text-slate-500">Know how often you actually use each service.</p>
+      </div>
+      <div class="p-5 rounded-lg border border-slate-100">
+        <div class="text-violet-600 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">AI Advisor</h3>
+        <p class="text-xs text-slate-500">GPT-powered savings recommendations.</p>
+      </div>
+      <div class="p-5 rounded-lg border border-slate-100">
+        <div class="text-sky-600 mb-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+        </div>
+        <h3 class="text-sm font-semibold text-slate-900 mb-1">Telegram Bot</h3>
+        <p class="text-xs text-slate-500">Manage subscriptions from your chat.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

@@ -132,32 +132,57 @@ The project follows a modular structure so that responsibilities are separated c
 \`\`\`
 subgenie/
 │
+├── bot/
+│   └── telegramBot.js
+│
 ├── config/
 │   └── db.js
 │
 ├── controllers/
+│   ├── analyticsController.js
 │   ├── authController.js
-│   ├── userController.js
 │   ├── subscriptionController.js
-│   └── usageLogController.js
+│   ├── usageLogController.js
+│   ├── userController.js
+│   └── viewController.js
 │
 ├── middleware/
 │   ├── authMiddleware.js
-│   └── errorMiddleware.js
+│   ├── errorMiddleware.js
+│   └── viewAuthMiddleware.js
 │
 ├── models/
-│   ├── User.js
 │   ├── Subscription.js
-│   └── UsageLog.js
+│   ├── TelegramUser.js
+│   ├── UsageLog.js
+│   └── User.js
+│
+├── public/
+│   ├── css/custom.css
+│   └── js/main.js
 │
 ├── routes/
+│   ├── analyticsRoutes.js
 │   ├── authRoutes.js
-│   ├── userRoutes.js
 │   ├── subscriptionRoutes.js
-│   └── usageLogRoutes.js
+│   ├── usageLogRoutes.js
+│   ├── userRoutes.js
+│   └── viewRoutes.js
 │
 ├── utils/
 │   └── generateToken.js
+│
+├── views/
+│   ├── partials/
+│   │   ├── header.ejs
+│   │   └── footer.ejs
+│   ├── dashboard.ejs
+│   ├── insights.ejs
+│   ├── landing.ejs
+│   ├── login.ejs
+│   ├── register.ejs
+│   ├── subscriptions.ejs
+│   └── usage.ejs
 │
 ├── app.js
 ├── .env
@@ -223,6 +248,7 @@ Create a `.env` file in the root directory and add the following:
 PORT=8000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_secret_key
+TELEGRAM_BOT_TOKEN=your_telegram_bot_token
 \`\`\`
 
 ### Step 4: Start the server
@@ -290,6 +316,14 @@ Used to sign and verify JWT tokens.
 Example:
 \`\`\`env
 JWT_SECRET=supersecretkey123
+\`\`\`
+
+### TELEGRAM_BOT_TOKEN (Optional)
+Used by the Telegram bot integration. If not set, the bot is simply disabled and the web app works normally.
+
+Example:
+\`\`\`env
+TELEGRAM_BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
 \`\`\`
 
 ---
@@ -691,21 +725,119 @@ There was initial confusion regarding cluster setup, database access, and networ
 
 ---
 
-## 17. Future Enhancements
+## 17. Analytics API
 
-The backend has been designed in a way that supports future improvements. Planned enhancements include:
+The analytics layer provides computed insights on top of the raw subscription and usage data.
 
-- AI-generated recommendations for identifying wasteful subscriptions
-- Telegram bot integration for quick subscription logging
-- MCP-based interaction layer for improved automation
-- analytics dashboard for cost-per-use and usage patterns
+### Endpoints
+
+#### Get Summary
+**GET** `/api/analytics/summary`
+
+Protected route. Returns aggregated stats for the current month.
+
+Response includes:
+- totalSubscriptions
+- totalMonthlySpend (yearly subscriptions are normalized to monthly)
+- usesThisMonth
+- avgCostPerUse
+
+#### Get Cost Per Use
+**GET** `/api/analytics/cost-per-use`
+
+Protected route. Returns a per-subscription breakdown with cost-per-use, sorted worst-value first.
+
+#### Get Insights
+**GET** `/api/analytics/insights`
+
+Protected route. Returns flagged subscriptions with recommendations. Flags include:
+- `unused` — no usage logs this month
+- `low_usage` — fewer than 4 uses this month
+- `high_cost_per_use` — cost per use exceeds 50% of subscription price
+
+Each insight includes a human-readable recommendation and potential savings calculation.
+
+---
+
+## 18. EJS Dashboard
+
+SubGenie includes a full server-rendered web interface built with EJS templates and styled with Tailwind CSS via CDN.
+
+### Pages
+
+| Route | Page |
+|-------|------|
+| `/` | Landing page with feature overview |
+| `/login` | Login form |
+| `/register` | Registration form |
+| `/dashboard` | Main dashboard with summary cards, spending chart, recent activity |
+| `/subscriptions` | Subscription management (add, delete, log usage) |
+| `/usage/:subscriptionId` | Usage history for a specific subscription |
+| `/insights` | Insights and recommendations with savings potential |
+| `/logout` | Clears session and redirects to landing |
+
+### Authentication
+
+The dashboard uses HTTP-only cookies to store JWT tokens. The `viewAuthMiddleware.js` middleware reads the cookie and authenticates the user for protected pages. The API endpoints continue to use Bearer token authentication as before.
+
+### Features
+
+- Summary cards showing total spend, subscription count, uses, and average cost-per-use
+- Doughnut chart (Chart.js) showing spending by category
+- Subscription cards with quick-action buttons (log use, view history, delete)
+- Color-coded usage indicators (green for well-used, yellow for low, red for unused)
+- Modal form for adding new subscriptions
+- Toast notifications for success/error feedback
+
+---
+
+## 19. Telegram Bot
+
+SubGenie includes a Telegram bot that allows users to manage subscriptions and log usage directly from Telegram.
+
+### Setup
+
+1. Open Telegram and search for **@BotFather**
+2. Send `/newbot` and follow the prompts to create your bot
+3. Copy the bot token provided by BotFather
+4. Add it to your `.env` file as `TELEGRAM_BOT_TOKEN`
+5. Restart the server — the bot starts automatically if the token is present
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `/start` | Welcome message and setup instructions |
+| `/link email password` | Link your Telegram account to SubGenie |
+| `/add Name Cost Category [monthly/yearly]` | Add a new subscription |
+| `/use SubscriptionName` | Log a usage event |
+| `/list` | List all subscriptions with costs |
+| `/report` | Get monthly cost-per-use report with warnings |
+| `/help` | Show available commands |
+
+### How It Works
+
+The bot runs inside the same Node.js process as the web server using long-polling. It directly queries MongoDB through Mongoose models (not HTTP calls to the API). Users must first link their Telegram account to their SubGenie account using the `/link` command with their email and password.
+
+A `TelegramUser` model maps Telegram chat IDs to SubGenie user accounts, enabling secure per-user data access.
+
+---
+
+## 20. Future Enhancements
+
+Planned improvements include:
+
+- AI-powered spending optimization recommendations
+- email alerts for upcoming renewals
+- payment integration for direct subscription management
+- mobile app
 - reminder systems for renewals and billing alerts
 - admin dashboards for overall usage monitoring
 - optional password reset and email verification
 
 ---
 
-## 18. Academic Deliverable Coverage
+## 21. Academic Deliverable Coverage
 
 This project satisfies the key Phase 2 requirements:
 
@@ -720,13 +852,13 @@ This project satisfies the key Phase 2 requirements:
 
 ---
 
-## 19. Team Collaboration Note
+## 22. Team Collaboration Note
 
 This project was developed in a collaborative team environment. Although responsibilities may be divided during development, the structure and implementation are intended to support shared understanding across the team. The modular design helps each team member work on routes, controllers, models, and middleware without tightly coupling the system.
 
 ---
 
-## 20. License
+## 23. License
 
 This project is developed for academic and educational purposes only.
 
