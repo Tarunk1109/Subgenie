@@ -1,7 +1,13 @@
+<!-- ─── Intro ─────────────────────────────────────────────────────────────── -->
+<div class="mb-5 animate-fade-in-up">
+  <p class="section-kicker">Intelligence</p>
+  <p class="page-intro-sub">Usage-based alerts and AI recommendations to trim recurring spend without guesswork.</p>
+</div>
+
 <!-- ─── Header + Savings Banner ───────────────────────────────────────────── -->
 <% if (parseFloat(potentialSavings) > 0) { %>
-<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 mb-5 rounded-2xl bg-gradient-to-r from-rose-50 to-amber-50 border border-rose-200 animate-fade-in-up">
-  <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0">
+<div class="relative z-0 flex flex-col sm:flex-row items-start sm:items-center gap-4 p-5 mb-5 banner-savings animate-fade-in-up stagger-1">
+  <div class="w-12 h-12 rounded-xl bg-white/80 backdrop-blur border border-rose-200/60 shadow-sm flex items-center justify-center flex-shrink-0">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
     </svg>
@@ -45,7 +51,7 @@
 <!-- ─── Insight Cards ──────────────────────────────────────────────────────── -->
 <% if (insights.length > 0) { %>
   <div class="mb-3 flex items-center gap-2">
-    <h3 class="text-sm font-bold text-slate-900">Usage Alerts</h3>
+    <h3 class="text-sm font-bold text-slate-900 tracking-tight">Usage alerts</h3>
     <span class="px-2 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200"><%= insights.length %></span>
   </div>
 
@@ -115,15 +121,15 @@
 
 <% } else { %>
   <!-- All clear state -->
-  <div class="card">
-    <div class="empty-state py-16">
-      <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+  <div class="card-solid overflow-hidden animate-fade-in-up stagger-2">
+    <div class="empty-state py-16 px-6">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 flex items-center justify-center mb-4 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
       </div>
-      <h3 class="text-sm font-bold text-slate-700 mb-1">All Good! 🎉</h3>
-      <p class="text-xs text-slate-400 text-center max-w-xs">No usage issues detected this month. Keep logging usage to maintain accurate insights.</p>
+      <h3 class="text-base font-bold text-slate-800 mb-1 tracking-tight">You're in good shape</h3>
+      <p class="text-sm text-slate-500 text-center max-w-sm leading-relaxed">No usage issues surfaced this month. Keep logging activity so insights stay precise.</p>
     </div>
   </div>
 <% } %>

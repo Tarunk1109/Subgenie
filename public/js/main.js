@@ -3,6 +3,86 @@ function getToken() {
   return window._authToken || "";
 }
 
+// ─── Service Brand Colors ─────────────────────────────────────────────────────
+const SERVICE_BRANDS = {
+  netflix:              { bg: '#E50914', fg: '#fff' },
+  spotify:              { bg: '#1DB954', fg: '#fff' },
+  youtube:              { bg: '#FF0000', fg: '#fff' },
+  'youtube premium':    { bg: '#FF0000', fg: '#fff' },
+  'youtube tv':         { bg: '#FF0000', fg: '#fff' },
+  'amazon prime':       { bg: '#00A8E0', fg: '#fff' },
+  'amazon prime video': { bg: '#00A8E0', fg: '#fff' },
+  amazon:               { bg: '#FF9900', fg: '#000' },
+  'disney+':            { bg: '#113CCF', fg: '#fff' },
+  'disney plus':        { bg: '#113CCF', fg: '#fff' },
+  disney:               { bg: '#113CCF', fg: '#fff' },
+  'apple tv+':          { bg: '#1c1c1e', fg: '#fff' },
+  'apple tv':           { bg: '#1c1c1e', fg: '#fff' },
+  'apple music':        { bg: '#fc3c44', fg: '#fff' },
+  icloud:               { bg: '#3693F3', fg: '#fff' },
+  apple:                { bg: '#1c1c1e', fg: '#fff' },
+  hulu:                 { bg: '#1CE783', fg: '#000' },
+  hbo:                  { bg: '#5822B4', fg: '#fff' },
+  'hbo max':            { bg: '#5822B4', fg: '#fff' },
+  max:                  { bg: '#002BE7', fg: '#fff' },
+  paramount:            { bg: '#0064FF', fg: '#fff' },
+  'paramount+':         { bg: '#0064FF', fg: '#fff' },
+  peacock:              { bg: '#000', fg: '#fff' },
+  adobe:                { bg: '#FF0000', fg: '#fff' },
+  'adobe creative':     { bg: '#FF0000', fg: '#fff' },
+  microsoft:            { bg: '#00A4EF', fg: '#fff' },
+  'microsoft 365':      { bg: '#D83B01', fg: '#fff' },
+  'office 365':         { bg: '#D83B01', fg: '#fff' },
+  google:               { bg: '#4285F4', fg: '#fff' },
+  'google one':         { bg: '#4285F4', fg: '#fff' },
+  dropbox:              { bg: '#0061FF', fg: '#fff' },
+  slack:                { bg: '#4A154B', fg: '#fff' },
+  zoom:                 { bg: '#2D8CFF', fg: '#fff' },
+  github:               { bg: '#24292E', fg: '#fff' },
+  notion:               { bg: '#000', fg: '#fff' },
+  figma:                { bg: '#F24E1E', fg: '#fff' },
+  chatgpt:              { bg: '#10A37F', fg: '#fff' },
+  openai:               { bg: '#10A37F', fg: '#fff' },
+  claude:               { bg: '#d97757', fg: '#fff' },
+  anthropic:            { bg: '#d97757', fg: '#fff' },
+  linkedin:             { bg: '#0A66C2', fg: '#fff' },
+  twitter:              { bg: '#1DA1F2', fg: '#fff' },
+  x:                    { bg: '#000', fg: '#fff' },
+  twitch:               { bg: '#9146FF', fg: '#fff' },
+  discord:              { bg: '#5865F2', fg: '#fff' },
+  duolingo:             { bg: '#58CC02', fg: '#fff' },
+  headspace:            { bg: '#FF7A59', fg: '#fff' },
+  calm:                 { bg: '#00B4D8', fg: '#fff' },
+  audible:              { bg: '#F8991C', fg: '#000' },
+  strava:               { bg: '#FC4C02', fg: '#fff' },
+  peloton:              { bg: '#D4001F', fg: '#fff' },
+  canva:                { bg: '#00C4CC', fg: '#fff' },
+  grammarly:            { bg: '#15C39A', fg: '#fff' },
+  '1password':          { bg: '#1A8CFF', fg: '#fff' },
+  lastpass:             { bg: '#D32D27', fg: '#fff' },
+  aha:                  { bg: '#e53e3e', fg: '#fff' },
+};
+
+function applyServiceBrands() {
+  document.querySelectorAll('[data-service]').forEach(el => {
+    const name = (el.dataset.service || '').toLowerCase().trim();
+    let brand = SERVICE_BRANDS[name];
+    if (!brand) {
+      for (const [key, val] of Object.entries(SERVICE_BRANDS)) {
+        if (name.includes(key) || key.includes(name)) {
+          brand = val;
+          break;
+        }
+      }
+    }
+    if (brand) {
+      el.style.background = brand.bg;
+      el.style.color = brand.fg;
+      el.style.backgroundImage = 'none';
+    }
+  });
+}
+
 // ─── API helper ──────────────────────────────────────────────────────────────
 async function apiCall(url, method = "GET", body = null) {
   const opts = {
@@ -423,6 +503,9 @@ function initBarChart(labels, values) {
 // ─── Init ────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Apply service brand colors to all subscription avatars
+  applyServiceBrands();
+
   const subForm = document.getElementById("subscriptionForm");
   if (subForm) {
     subForm.addEventListener("submit", (e) => {

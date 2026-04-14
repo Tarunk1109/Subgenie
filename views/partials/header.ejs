@@ -1,30 +1,37 @@
 <nav class="nav-glass sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-14 items-center">
+
+      <!-- Logo -->
       <a href="/" class="flex items-center gap-2.5 group">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center shadow-lg shadow-brand-500/20 group-hover:shadow-brand-500/40 transition-shadow">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+        <div class="nav-logo-mark group-hover:shadow-brand-500/50 transition-all duration-300">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+            <path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" fill="white"/>
+            <path d="M18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" fill="white" opacity="0.7"/>
+          </svg>
         </div>
-        <span class="text-lg font-bold text-white tracking-tight">SubGenie</span>
+        <span class="text-[15px] font-bold text-white tracking-tight">SubGenie</span>
+        <span class="nav-ai-pill">AI</span>
       </a>
-      <div class="flex items-center gap-1">
+
+      <!-- Nav Links -->
+      <div class="flex items-center gap-0.5">
         <% if (typeof user !== 'undefined' && user) { %>
           <% const currentPage = typeof pageTitle !== 'undefined' ? pageTitle : ''; %>
-          <a href="/dashboard" class="px-3 py-1.5 text-[13px] font-medium rounded-lg transition-all duration-200 <%= currentPage === 'Dashboard' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-white/5' %>">Dashboard</a>
-          <a href="/subscriptions" class="px-3 py-1.5 text-[13px] font-medium rounded-lg transition-all duration-200 <%= currentPage === 'Subscriptions' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-white/5' %>">Subscriptions</a>
-          <a href="/insights" class="px-3 py-1.5 text-[13px] font-medium rounded-lg transition-all duration-200 <%= currentPage === 'Insights' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-white hover:bg-white/5' %>">Insights</a>
+          <a href="/dashboard" class="nav-link <%= currentPage === 'Dashboard' ? 'nav-link-active' : '' %>">Dashboard</a>
+          <a href="/subscriptions" class="nav-link <%= currentPage === 'Subscriptions' ? 'nav-link-active' : '' %>">Subscriptions</a>
+          <a href="/insights" class="nav-link <%= currentPage === 'Insights' ? 'nav-link-active' : '' %>">Insights</a>
           <% if (user.role === 'admin') { %>
-            <a href="/admin" class="px-3 py-1.5 text-[13px] font-medium rounded-lg transition-all duration-200 <%= currentPage === 'Admin' ? 'bg-amber-500/20 text-amber-300' : 'text-amber-400/80 hover:text-amber-300 hover:bg-amber-500/10' %>">Admin</a>
+            <a href="/admin" class="nav-link nav-link-admin <%= currentPage === 'Admin' ? 'nav-link-admin-active' : '' %>">Admin</a>
           <% } %>
           <div class="w-px h-4 bg-white/10 mx-2"></div>
           <a href="/profile" class="flex items-center gap-2 group">
-            <div class="w-7 h-7 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-[11px] font-bold text-white uppercase ring-2 ring-brand-400/20 group-hover:ring-brand-400/40 transition-all"><%= user.name.charAt(0) %></div>
-            <span class="text-[13px] text-slate-400 hidden sm:inline group-hover:text-slate-300 transition-colors"><%= user.name %></span>
+            <div class="nav-avatar" title="<%= user.name %>"><%= user.name.charAt(0).toUpperCase() %></div>
           </a>
-          <a href="/logout" class="ml-1 px-2.5 py-1.5 text-[13px] font-medium text-slate-500 hover:text-rose-400 rounded-lg transition-colors">Logout</a>
+          <a href="/logout" class="ml-2 nav-link nav-link-logout">Logout</a>
         <% } else { %>
-          <a href="/login" class="px-3 py-1.5 text-[13px] font-medium text-slate-400 hover:text-white rounded-lg btn-ghost transition">Login</a>
-          <a href="/register" class="ml-1 px-4 py-1.5 btn-primary text-white text-[13px] font-semibold rounded-lg">Sign Up</a>
+          <a href="/login" class="nav-link">Login</a>
+          <a href="/register" class="ml-1 nav-cta-btn">Get Started</a>
         <% } %>
       </div>
     </div>

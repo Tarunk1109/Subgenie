@@ -1,15 +1,16 @@
 <!-- ─── Header ────────────────────────────────────────────────────────────── -->
-<div class="mb-5">
+<div class="mb-5 animate-fade-in-up">
   <a href="/subscriptions" class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-600 transition mb-3">
     <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
     </svg>
     Back to Subscriptions
   </a>
+  <p class="section-kicker">Activity</p>
 
-  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-1">
     <div class="flex items-center gap-4">
-      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center text-brand-700 text-xl font-bold">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-600 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-brand-500/25 ring-2 ring-white">
         <%= subscription.name.charAt(0).toUpperCase() %>
       </div>
       <div>
@@ -38,25 +39,28 @@
     const totalUses = logs.filter(l => l.action === 'used').length;
     const totalLogs = logs.length;
   %>
-  <div class="card p-4 text-center">
-    <div class="text-2xl font-extrabold text-slate-900"><%= totalLogs %></div>
-    <div class="text-xs text-slate-500 mt-1">Total Entries</div>
+  <div class="mini-stat mini-stat-indigo animate-fade-in-up stagger-1">
+    <div class="mini-stat-glow"></div>
+    <div class="relative text-2xl font-extrabold text-slate-900 tracking-tight"><%= totalLogs %></div>
+    <div class="relative text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wide">Entries</div>
   </div>
-  <div class="card p-4 text-center">
-    <div class="text-2xl font-extrabold text-emerald-600"><%= totalUses %></div>
-    <div class="text-xs text-slate-500 mt-1">Times Used</div>
+  <div class="mini-stat mini-stat-emerald animate-fade-in-up stagger-2">
+    <div class="mini-stat-glow"></div>
+    <div class="relative text-2xl font-extrabold text-emerald-600 tracking-tight"><%= totalUses %></div>
+    <div class="relative text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wide">Times used</div>
   </div>
-  <div class="card p-4 text-center">
-    <div class="text-2xl font-extrabold text-slate-900">
+  <div class="mini-stat mini-stat-slate animate-fade-in-up stagger-3">
+    <div class="mini-stat-glow"></div>
+    <div class="relative text-2xl font-extrabold text-slate-900 tracking-tight">
       <%= totalUses > 0 ? '$' + (subscription.billingCycle === 'yearly' ? (subscription.cost/12) : subscription.cost / totalUses).toFixed(2) : '—' %>
     </div>
-    <div class="text-xs text-slate-500 mt-1">Cost / Use</div>
+    <div class="relative text-[11px] font-medium text-slate-500 mt-1 uppercase tracking-wide">Cost / use</div>
   </div>
 </div>
 
 <!-- ─── Usage History ─────────────────────────────────────────────────────── -->
-<div class="card overflow-hidden">
-  <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+<div class="card-solid overflow-hidden animate-fade-in-up stagger-2">
+  <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
     <div>
       <h2 class="text-sm font-bold text-slate-900">Usage History</h2>
       <p class="text-xs text-slate-400 mt-0.5"><%= logs.length %> entr<%= logs.length === 1 ? 'y' : 'ies' %></p>

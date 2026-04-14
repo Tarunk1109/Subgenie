@@ -1,4 +1,5 @@
 import TelegramBot from "node-telegram-bot-api";
+import OpenAI from "openai";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import TelegramUser from "../models/TelegramUser.js";
@@ -33,6 +34,55 @@ function parseName(input) {
   return { name: parts[0], rest: parts.slice(1).join(" ") };
 }
 
+// ─── NLP Intent Parser ───────────────────────────────────────────────────────
+async function parseNaturalMessage(text, subscriptionNames) {
+  if (!process.env.OPENAI_API_KEY) return null;
+
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const nameList = subscriptionNames.join(", ") || "none";
+
+  const systemPrompt = `You are a subscription management assistant. A user sent a casual message — determine what they want to do.
+
+User's current subscriptions: ${nameList}
+
+Respond ONLY with valid JSON (no markdown, no explanation):
+{
+  "intent": "log_usage" | "add_subscription" | "log_not_used" | "query_spend" | "unknown",
+  "subscription": "<name — exact match from list for log_usage, or new name for add_subscription, or null>",
+  "cost": <monthly cost as a number, or null>,
+  "category": "<category string, or null>",
+  "billingCycle": "monthly" | "yearly" | null,
+  "confidence": 0.0 to 1.0,
+  "naturalReply": "<short, friendly 1-sentence confirmation>"
+}
+
+Intent rules:
+- "log_usage": user says they used/watched/listened/played/opened a subscription
+- "add_subscription": user says they bought/subscribed/signed up for/got a new service
+- "log_not_used": user says they didn't use something or cancelled
+- "query_spend": user is asking how much they're spending
+- "unknown": message is unrelated or too ambiguous
+
+For "log_usage": subscription must match a name from the list above (or closest match).
+For "add_subscription": subscription is the new service name extracted from the message; extract cost and billingCycle if mentioned; infer category from context (Entertainment, Productivity, Health, etc.) or use "Other".
+Confidence above 0.75 means act on it; below means ask for clarification.`;
+
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: text },
+    ],
+    temperature: 0.2,
+    max_tokens: 150,
+  });
+
+  const raw = response.choices[0]?.message?.content?.trim();
+  if (!raw) return null;
+
+  return JSON.parse(raw);
+}
+
 export function startBot() {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) {
@@ -51,12 +101,15 @@ export function startBot() {
       `Hey ${name}, welcome to SubGenie.\n\n` +
         `Link your account first:\n` +
         `/link your@email.com password\n\n` +
-        `Commands:\n` +
+        `Then just chat naturally:\n` +
+        `"just finished watching Netflix"\n` +
+        `"used Spotify on my commute"\n` +
+        `"how much am I spending?"\n\n` +
+        `Or use commands:\n` +
         `/add Name Cost Category [monthly/yearly]\n` +
-        `/add "Amazon Prime" 14.99 Entertainment\n` +
         `/use Netflix\n` +
-        `/list\n` +
-        `/report\n` +
+        `/list — view subscriptions\n` +
+        `/report — monthly cost-per-use\n` +
         `/suggest — AI savings tips\n` +
         `/compare Name — find cheaper alternatives\n` +
         `/remind on/off — daily reminders\n` +
@@ -70,10 +123,15 @@ export function startBot() {
   bot.onText(/\/help/, async (msg) => {
     await send(
       msg.chat.id,
-      `SubGenie Commands\n\n` +
+      `SubGenie Help\n\n` +
+        `Natural language (just type it):\n` +
+        `  "just watched Netflix"\n` +
+        `  "listened to Spotify"\n` +
+        `  "how much am I spending?"\n\n` +
+        `Commands:\n` +
         `/link email password — Link account\n` +
-        `/add Name Cost Category [cycle] — Add (use quotes for multi-word names)\n` +
-        `/use Name — Log usage\n` +
+        `/add Name Cost Category [cycle] — Add subscription\n` +
+        `/use Name — Log usage manually\n` +
         `/delete Name — Remove subscription\n` +
         `/list — All subscriptions\n` +
         `/report — Monthly cost-per-use report\n` +
@@ -378,6 +436,108 @@ export function startBot() {
 
   // Send initial reminders after 30s startup delay
   setTimeout(() => sendReminders().catch(() => {}), 30000);
+
+  // ─── Natural Language Usage Logging ────────────────────────────────────────
+  // Catches all non-command messages and uses GPT to detect usage intent
+  bot.on("message", async (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text;
+
+    // Ignore commands, non-text messages, and forwarded content
+    if (!text || text.startsWith("/")) return;
+
+    const user = await getLinkedUser(chatId);
+    if (!user) return; // silently ignore unlinked users for non-command messages
+
+    try {
+      const subs = await Subscription.find({ user: user._id }).sort("name");
+      if (subs.length === 0) return; // no subs to log against
+
+      const subNames = subs.map((s) => s.name);
+      const parsed = await parseNaturalMessage(text, subNames);
+
+      if (!parsed) return; // OpenAI not configured or parse failed
+
+      // Handle spend queries
+      if (parsed.intent === "query_spend") {
+        let total = 0;
+        subs.forEach((s) => {
+          total += s.billingCycle === "yearly" ? s.cost / 12 : s.cost;
+        });
+        return send(chatId, `You're spending $${total.toFixed(2)}/month across ${subs.length} subscription(s). Type /report for the full breakdown.`);
+      }
+
+      // Handle add_subscription
+      if (parsed.intent === "add_subscription" && parsed.subscription && parsed.confidence >= 0.75) {
+        const name = parsed.subscription;
+        const cost = typeof parsed.cost === "number" && parsed.cost >= 0 ? parsed.cost : null;
+        const category = parsed.category || "Other";
+        const billingCycle = parsed.billingCycle === "yearly" ? "yearly" : "monthly";
+
+        if (!cost && cost !== 0) {
+          return send(
+            chatId,
+            `I see you got "${name}" — how much does it cost per month? Reply:\n/add "${name}" <cost> ${category}`
+          );
+        }
+
+        const sub = await Subscription.create({
+          user: user._id,
+          name,
+          cost,
+          category,
+          billingCycle,
+        });
+        const cycleLabel = billingCycle === "yearly" ? "year" : "month";
+        const reply = parsed.naturalReply || `Added "${sub.name}" — $${sub.cost.toFixed(2)}/${cycleLabel} (${sub.category})`;
+        return send(chatId, reply);
+      }
+
+      // Low confidence add — ask for confirmation
+      if (parsed.intent === "add_subscription" && parsed.subscription && parsed.confidence < 0.75) {
+        const costHint = parsed.cost ? ` at $${parsed.cost}/mo` : "";
+        return send(
+          chatId,
+          `Did you want to add "${parsed.subscription}"${costHint} to your subscriptions? Use:\n/add "${parsed.subscription}" ${parsed.cost ?? "<cost>"} ${parsed.category ?? "Other"}`
+        );
+      }
+
+      // Handle log_usage with sufficient confidence
+      if (parsed.intent === "log_usage" && parsed.subscription && parsed.confidence >= 0.75) {
+        // Find the subscription (case-insensitive exact match first, then fuzzy)
+        let sub = subs.find(
+          (s) => s.name.toLowerCase() === parsed.subscription.toLowerCase()
+        );
+        if (!sub) {
+          sub = subs.find((s) =>
+            s.name.toLowerCase().includes(parsed.subscription.toLowerCase()) ||
+            parsed.subscription.toLowerCase().includes(s.name.toLowerCase())
+          );
+        }
+
+        if (!sub) {
+          return send(chatId, `I think you used "${parsed.subscription}" but I couldn't find that in your subscriptions. Use /list to see what's tracked.`);
+        }
+
+        await UsageLog.create({ user: user._id, subscription: sub._id, action: "used" });
+        const reply = parsed.naturalReply || `Logged usage for "${sub.name}"!`;
+        return send(chatId, reply);
+      }
+
+      // Low confidence — ask for clarification
+      if (parsed.intent === "log_usage" && parsed.subscription && parsed.confidence < 0.75) {
+        return send(
+          chatId,
+          `Did you use "${parsed.subscription}"? Reply with /use ${parsed.subscription} to confirm, or /list to see all subscriptions.`
+        );
+      }
+
+      // unknown / log_not_used — don't respond to keep the chat natural
+    } catch (err) {
+      // Silently ignore NLP errors — don't spam the user with error messages
+      console.error("NLP handler error:", err.message);
+    }
+  });
 
   bot.on("polling_error", (err) => {
     console.error("Telegram polling error:", err.code, err.message);

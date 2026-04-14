@@ -1,6 +1,9 @@
 <div class="max-w-2xl">
+  <p class="section-kicker mb-1 animate-fade-in-up">Account</p>
+  <p class="page-intro-sub mb-5 animate-fade-in-up stagger-1">Update your identity and security preferences. Changes apply to this session immediately after save.</p>
+
   <!-- ─── Profile Card ───────────────────────────────────────────────────── -->
-  <div class="card p-6 mb-5 animate-fade-in-up">
+  <div class="card-solid p-6 mb-5 animate-fade-in-up stagger-1">
     <div class="flex items-center gap-5">
       <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-500 to-violet-600 flex items-center justify-center text-2xl font-bold text-white shadow-lg shadow-brand-500/25">
         <%= user.name.charAt(0).toUpperCase() %>
@@ -39,7 +42,7 @@
   <% } %>
 
   <!-- ─── Edit Form ───────────────────────────────────────────────────────── -->
-  <div class="card p-6 animate-fade-in-up stagger-1">
+  <div class="card-solid p-6 animate-fade-in-up stagger-2">
     <h3 class="text-sm font-bold text-slate-900 mb-5 pb-3 border-b border-slate-100">Edit Profile</h3>
     <form id="profileForm" action="/profile" method="POST" novalidate class="space-y-4">
       <div>
@@ -82,7 +85,7 @@
   </div>
 
   <!-- ─── Danger Zone ────────────────────────────────────────────────────── -->
-  <div class="card p-5 mt-4 border-rose-200 animate-fade-in-up stagger-2">
+  <div class="card-solid p-5 mt-4 border-rose-200/80 bg-gradient-to-br from-rose-50/40 to-white animate-fade-in-up stagger-3">
     <h3 class="text-sm font-bold text-rose-700 mb-3">Sign Out</h3>
     <p class="text-xs text-slate-500 mb-3">End your current session across all devices.</p>
     <a href="/logout" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl hover:bg-rose-100 transition">

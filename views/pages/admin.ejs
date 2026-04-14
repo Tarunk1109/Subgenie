@@ -1,14 +1,17 @@
 <!-- ─── Header ────────────────────────────────────────────────────────────── -->
-<div class="flex items-center gap-3 mb-5">
-  <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
+<div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-5 animate-fade-in-up">
+  <div class="flex items-center gap-3 flex-1 min-w-0">
+    <div class="admin-header-icon flex-shrink-0">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    </div>
+    <div class="min-w-0">
+      <p class="section-kicker text-amber-700/90">Control plane</p>
+      <p class="text-slate-500 text-sm"><%= users.length %> registered user<%= users.length !== 1 ? 's' : '' %></p>
+    </div>
   </div>
-  <div>
-    <p class="text-slate-500 text-sm"><%= users.length %> registered user<%= users.length !== 1 ? 's' : '' %></p>
-  </div>
-  <span class="ml-auto px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full border border-amber-200">Admin Only</span>
+  <span class="sm:ml-auto inline-flex items-center px-3 py-1.5 bg-amber-50 text-amber-900 text-xs font-bold rounded-full border border-amber-200/80 shadow-sm">Admin only</span>
 </div>
 
 <% if (success) { %>
@@ -19,7 +22,7 @@
 <% } %>
 
 <!-- ─── Users Table ─────────────────────────────────────────────────────── -->
-<div class="card overflow-hidden">
+<div class="card-solid overflow-hidden animate-fade-in-up stagger-1">
   <div class="overflow-x-auto">
     <table class="w-full table-modern">
       <thead>
