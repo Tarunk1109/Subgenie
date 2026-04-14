@@ -1,186 +1,274 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-  <div class="flex items-center justify-between mb-8">
-    <div>
-      <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
-      <p class="text-slate-500 text-sm mt-0.5">Your subscription intelligence at a glance</p>
+<!-- ─── Greeting ──────────────────────────────────────────────────────────── -->
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div>
+    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">
+      Good <%= new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening' %>,
+      <%= user.name.split(' ')[0] %> 👋
+    </h2>
+    <p class="text-slate-500 text-sm mt-0.5">Here's your subscription overview for <%= new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' }) %></p>
+  </div>
+  <a href="/subscriptions" class="btn-primary px-4 py-2 text-white text-sm font-semibold rounded-xl flex items-center gap-2 self-start sm:self-auto">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
+    Add Subscription
+  </a>
+</div>
+
+<!-- ─── Stat Cards ────────────────────────────────────────────────────────── -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+
+  <!-- Active Subscriptions -->
+  <div class="stat-card stat-card-indigo animate-fade-in-up stagger-1">
+    <div class="stat-card-accent"></div>
+    <div class="stat-card-icon bg-brand-50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
     </div>
-    <a href="/subscriptions" class="btn-primary px-4 py-2 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" /></svg>
-      Manage
-    </a>
+    <div class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none"><%= totalSubs %></div>
+    <div class="text-xs font-medium text-slate-500 mt-1.5">Active Subscriptions</div>
   </div>
 
-  <!-- Stat Cards -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-    <div class="card-solid p-5 stat-card stat-card-indigo animate-fade-in-up stagger-1">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500/20 to-brand-600/10 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= totalSubs %></div>
-      <div class="text-xs font-medium text-slate-500 mt-1">Active Subscriptions</div>
+  <!-- Monthly Spend -->
+  <div class="stat-card stat-card-emerald animate-fade-in-up stagger-2">
+    <div class="stat-card-accent"></div>
+    <div class="stat-card-icon bg-emerald-50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
     </div>
-    <div class="card-solid p-5 stat-card stat-card-emerald animate-fade-in-up stagger-2">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" /></svg>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight">$<%= totalMonthlySpend %></div>
-      <div class="text-xs font-medium text-slate-500 mt-1">Monthly Spend</div>
-    </div>
-    <div class="card-solid p-5 stat-card stat-card-amber animate-fade-in-up stagger-3">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= usesThisMonth %></div>
-      <div class="text-xs font-medium text-slate-500 mt-1">Uses This Month</div>
-    </div>
-    <div class="card-solid p-5 stat-card stat-card-rose animate-fade-in-up stagger-4">
-      <div class="flex items-center gap-3 mb-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500/20 to-rose-600/10 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
-        </div>
-      </div>
-      <div class="text-3xl font-extrabold text-slate-900 tracking-tight"><%= avgCostPerUse === 'N/A' ? '—' : '$' + avgCostPerUse %></div>
-      <div class="text-xs font-medium text-slate-500 mt-1">Avg Cost / Use</div>
-    </div>
+    <div class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">$<%= totalMonthlySpend %></div>
+    <div class="text-xs font-medium text-slate-500 mt-1.5">Monthly Spend</div>
   </div>
 
-  <div class="grid lg:grid-cols-3 gap-6">
-    <!-- Chart -->
-    <div class="card-solid p-6">
-      <h2 class="text-sm font-bold text-slate-900 mb-4">Spending by Category</h2>
-      <% if (Object.keys(categorySpend).length > 0) { %>
-        <div class="relative h-60"><canvas id="categoryChart"></canvas></div>
-      <% } else { %>
-        <div class="flex flex-col items-center justify-center h-60 text-slate-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /><path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" /></svg>
-          <p class="text-sm">Add subscriptions to see chart</p>
-        </div>
-      <% } %>
+  <!-- Uses This Month -->
+  <div class="stat-card stat-card-amber animate-fade-in-up stagger-3">
+    <div class="stat-card-accent"></div>
+    <div class="stat-card-icon bg-amber-50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+      </svg>
     </div>
-
-    <!-- Recent Activity -->
-    <div class="lg:col-span-2 card-solid p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-sm font-bold text-slate-900">Recent Activity</h2>
-        <a href="/subscriptions" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition">View all</a>
-      </div>
-      <% if (recentLogs.length > 0) { %>
-        <div class="space-y-2">
-          <% recentLogs.forEach(function(log, i) { %>
-            <div class="flex items-center justify-between py-2.5 px-4 rounded-lg bg-slate-50/80 hover:bg-slate-100/80 transition animate-fade-in-up stagger-<%= Math.min(i+1, 4) %>">
-              <div class="flex items-center gap-3">
-                <div class="w-2.5 h-2.5 rounded-full <%= log.action === 'used' ? 'bg-emerald-500 shadow-sm shadow-emerald-500/30' : 'bg-slate-300' %>"></div>
-                <span class="text-sm font-semibold text-slate-700"><%= log.subscription ? log.subscription.name : 'Unknown' %></span>
-                <span class="text-xs text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded"><%= log.action %></span>
-              </div>
-              <span class="text-xs text-slate-400"><%= new Date(log.date).toLocaleDateString() %></span>
-            </div>
-          <% }) %>
-        </div>
-      <% } else { %>
-        <div class="flex flex-col items-center justify-center py-12 text-slate-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-          <p class="text-sm">No usage logged yet</p>
-        </div>
-      <% } %>
-    </div>
+    <div class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none"><%= usesThisMonth %></div>
+    <div class="text-xs font-medium text-slate-500 mt-1.5">Uses This Month</div>
   </div>
 
-  <!-- Subscription Table -->
-  <div class="mt-6 card-solid p-6">
+  <!-- Avg Cost/Use -->
+  <div class="stat-card stat-card-rose animate-fade-in-up stagger-4">
+    <div class="stat-card-accent"></div>
+    <div class="stat-card-icon bg-rose-50">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+      </svg>
+    </div>
+    <div class="text-3xl font-extrabold text-slate-900 tracking-tight leading-none">
+      <%= avgCostPerUse === 'N/A' ? '—' : '$' + avgCostPerUse %>
+    </div>
+    <div class="text-xs font-medium text-slate-500 mt-1.5">Avg Cost / Use</div>
+  </div>
+</div>
+
+<!-- ─── Charts + Activity ─────────────────────────────────────────────────── -->
+<div class="grid lg:grid-cols-5 gap-5 mb-5">
+
+  <!-- Spending by Category -->
+  <div class="lg:col-span-2 card p-5 animate-fade-in-up stagger-2">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-sm font-bold text-slate-900">Subscriptions</h2>
-      <a href="/subscriptions" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition">Manage</a>
+      <h3 class="text-sm font-bold text-slate-900">Spending by Category</h3>
+      <span class="text-xs text-slate-400">Monthly</span>
     </div>
-    <% if (subscriptions.length > 0) { %>
-      <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-          <thead>
-            <tr class="text-left text-[11px] text-slate-500 uppercase tracking-wider border-b border-slate-100">
-              <th class="pb-3 font-semibold">Name</th>
-              <th class="pb-3 font-semibold">Category</th>
-              <th class="pb-3 font-semibold">Cost</th>
-              <th class="pb-3 font-semibold">Cycle</th>
-              <th class="pb-3 font-semibold text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% subscriptions.forEach(function(sub) { %>
-              <tr class="border-b border-slate-50 table-row-alt hover:bg-brand-50/30 transition-colors">
-                <td class="py-3 font-semibold text-slate-800"><%= sub.name %></td>
-                <td class="py-3 text-slate-500"><%= sub.category %></td>
-                <td class="py-3 font-semibold text-slate-800">$<%= sub.cost.toFixed(2) %></td>
-                <td class="py-3"><span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600"><%= sub.billingCycle %></span></td>
-                <td class="py-3 text-right">
-                  <div class="flex items-center justify-end gap-1">
-                    <button onclick="logUsage('<%= sub._id %>')" class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition">Log Use</button>
-                    <% if (user.role === 'admin') { %>
-                      <button onclick="openEditModal('<%= sub._id %>', '<%= sub.name %>', <%= sub.cost %>, '<%= sub.category %>', '<%= sub.billingCycle %>')" class="px-3 py-1.5 text-xs font-semibold bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition">Edit</button>
-                      <button onclick="deleteSubscription('<%= sub._id %>')" class="px-3 py-1.5 text-xs font-semibold bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition">Delete</button>
-                    <% } %>
-                  </div>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
+    <% if (Object.keys(categorySpend).length > 0) { %>
+      <div class="relative h-56">
+        <canvas id="categoryChart"></canvas>
       </div>
     <% } else { %>
-      <div class="text-center py-10 text-slate-400">
-        <p class="text-sm mb-2">No subscriptions yet</p>
-        <a href="/subscriptions" class="btn-primary inline-block px-5 py-2 text-white text-sm font-semibold rounded-lg">Add your first</a>
+      <div class="empty-state h-56 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mb-3 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+        </svg>
+        <p class="text-sm font-medium">No data yet</p>
+        <p class="text-xs text-slate-400 mt-1">Add subscriptions to see chart</p>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="lg:col-span-3 card p-5 animate-fade-in-up stagger-3">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="text-sm font-bold text-slate-900">Recent Activity</h3>
+      <a href="/subscriptions" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition">View all →</a>
+    </div>
+    <% if (recentLogs.length > 0) { %>
+      <div>
+        <% recentLogs.forEach(function(log, i) { %>
+          <div class="activity-item animate-fade-in-up stagger-<%= Math.min(i+1,4) %>">
+            <div class="relative">
+              <div class="activity-dot <%= log.action === 'used' ? 'bg-emerald-500' : 'bg-slate-300' %>"></div>
+              <% if (i < recentLogs.length - 1) { %>
+                <div class="absolute top-3 left-[3.5px] w-px h-6 bg-slate-100"></div>
+              <% } %>
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-slate-700 truncate">
+                  <%= log.subscription ? log.subscription.name : 'Unknown' %>
+                </span>
+                <span class="text-[11px] px-2 py-0.5 rounded-full font-semibold flex-shrink-0
+                  <%= log.action === 'used' ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500' %>">
+                  <%= log.action === 'used' ? 'Used' : 'Not used' %>
+                </span>
+              </div>
+            </div>
+            <span class="text-xs text-slate-400 flex-shrink-0">
+              <%= new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+            </span>
+          </div>
+        <% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty-state py-8 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mb-2 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-sm">No usage logged yet</p>
+        <p class="text-xs mt-1 text-slate-400">Log usage from the Subscriptions page</p>
       </div>
     <% } %>
   </div>
 </div>
 
-<% if (user.role === 'admin') { %>
-<div id="subModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-  <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 p-6 animate-fade-in-up">
-    <div class="flex items-center justify-between mb-5">
-      <h2 id="modalTitle" class="text-lg font-bold text-slate-900">Edit Subscription</h2>
-      <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+<!-- ─── Subscription List ─────────────────────────────────────────────────── -->
+<div class="card animate-fade-in-up stagger-4">
+  <div class="flex items-center justify-between px-5 pt-5 pb-3">
+    <div>
+      <h3 class="text-sm font-bold text-slate-900">Subscriptions</h3>
+      <p class="text-xs text-slate-400 mt-0.5"><%= subscriptions.length %> active</p>
+    </div>
+    <a href="/subscriptions" class="text-xs text-brand-600 hover:text-brand-700 font-semibold transition">Manage all →</a>
+  </div>
+
+  <% if (subscriptions.length > 0) { %>
+    <div class="overflow-x-auto">
+      <table class="w-full table-modern">
+        <thead>
+          <tr>
+            <th class="text-left">Name</th>
+            <th class="text-left hidden sm:table-cell">Category</th>
+            <th class="text-left">Cost</th>
+            <th class="text-left hidden md:table-cell">Cycle</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% subscriptions.forEach(function(sub) { %>
+            <tr>
+              <td>
+                <div class="flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center text-brand-700 text-xs font-bold flex-shrink-0">
+                    <%= sub.name.charAt(0).toUpperCase() %>
+                  </div>
+                  <span class="font-semibold text-slate-800 text-sm"><%= sub.name %></span>
+                </div>
+              </td>
+              <td class="hidden sm:table-cell">
+                <span class="cat-pill"><%= sub.category %></span>
+              </td>
+              <td>
+                <span class="font-bold text-slate-800 text-sm">$<%= sub.cost.toFixed(2) %></span>
+              </td>
+              <td class="hidden md:table-cell">
+                <span class="text-xs px-2 py-1 rounded-lg font-semibold cycle-<%= sub.billingCycle %>"><%= sub.billingCycle %></span>
+              </td>
+              <td>
+                <div class="flex items-center justify-end gap-1">
+                  <button onclick="logUsage('<%= sub._id %>')"
+                    class="px-2.5 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition">
+                    Log Use
+                  </button>
+                  <button onclick="openEditModal('<%= sub._id %>','<%= sub.name.replace(/'/g, "\\'") %>',<%= sub.cost %>,'<%= sub.category.replace(/'/g, "\\'") %>','<%= sub.billingCycle %>')"
+                    class="px-2.5 py-1.5 text-xs font-semibold bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition">
+                    Edit
+                  </button>
+                  <button onclick="deleteSubscription('<%= sub._id %>')"
+                    class="px-2.5 py-1.5 text-xs font-semibold bg-rose-50 text-rose-600 rounded-lg hover:bg-rose-100 transition">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty-state">
+      <div class="w-16 h-16 rounded-2xl bg-brand-50 flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </div>
+      <p class="text-sm font-semibold text-slate-600 mb-1">No subscriptions yet</p>
+      <p class="text-xs text-slate-400 mb-4">Add your first subscription to start tracking</p>
+      <button onclick="openAddModal()" class="btn-primary px-5 py-2 text-white text-sm font-semibold rounded-xl">
+        Add First Subscription
       </button>
     </div>
-    <form id="subscriptionForm" class="space-y-4">
-      <input type="hidden" id="editSubId" value="" />
-      <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Name</label>
-        <input type="text" id="subName" name="name" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50" />
-        <p id="errName" class="text-xs text-rose-600 mt-1 hidden"></p>
+  <% } %>
+</div>
+
+<!-- ─── Add/Edit Modal ────────────────────────────────────────────────────── -->
+<div id="subModal" class="hidden modal-backdrop">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-brand-50 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+        </div>
+        <h2 id="modalTitle" class="text-base font-bold text-slate-900">Add Subscription</h2>
       </div>
-      <div class="grid grid-cols-2 gap-3">
+      <button onclick="closeModal()" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form id="subscriptionForm" class="space-y-4">
+        <input type="hidden" id="editSubId" value="" />
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Cost ($)</label>
-          <input type="number" id="subCost" name="cost" min="0" step="0.01" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50" />
-          <p id="errCost" class="text-xs text-rose-600 mt-1 hidden"></p>
+          <label class="form-label">Subscription Name</label>
+          <input type="text" id="subName" name="name" class="form-input" placeholder="e.g. Netflix, Spotify…" />
+          <p id="errName" class="text-xs text-rose-600 mt-1 hidden"></p>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="form-label">Cost ($)</label>
+            <input type="number" id="subCost" name="cost" min="0" step="0.01" class="form-input" placeholder="15.99" />
+            <p id="errCost" class="text-xs text-rose-600 mt-1 hidden"></p>
+          </div>
+          <div>
+            <label class="form-label">Billing Cycle</label>
+            <select id="subCycle" name="billingCycle" class="form-input">
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Billing Cycle</label>
-          <select id="subCycle" name="billingCycle" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50">
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-          </select>
+          <label class="form-label">Category</label>
+          <input type="text" id="subCategory" name="category" class="form-input" placeholder="e.g. Entertainment, Fitness…" />
+          <p id="errCategory" class="text-xs text-rose-600 mt-1 hidden"></p>
         </div>
-      </div>
-      <div>
-        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Category</label>
-        <input type="text" id="subCategory" name="category" class="w-full px-3.5 py-2.5 border border-slate-200 rounded-lg text-sm bg-slate-50/50" />
-        <p id="errCategory" class="text-xs text-rose-600 mt-1 hidden"></p>
-      </div>
-      <button type="submit" id="modalSubmitBtn" class="w-full py-2.5 btn-primary text-white text-sm font-semibold rounded-lg">Save Changes</button>
-    </form>
+        <button type="submit" id="modalSubmitBtn" class="w-full py-2.5 btn-primary text-white text-sm font-bold rounded-xl">
+          Add Subscription
+        </button>
+      </form>
+    </div>
   </div>
 </div>
-<% } %>
 
+<!-- ─── Chart init ────────────────────────────────────────────────────────── -->
 <% if (Object.keys(categorySpend).length > 0) { %>
 <script>
   document.addEventListener('DOMContentLoaded', function() {

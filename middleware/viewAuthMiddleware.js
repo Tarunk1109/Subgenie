@@ -15,6 +15,9 @@ export const viewProtect = async (req, res, next) => {
       res.clearCookie("token");
       return res.redirect("/login");
     }
+    // Expose token and app-page flag to all views via res.locals
+    res.locals.authToken = token;
+    res.locals.isAppPage = true;
     next();
   } catch {
     res.clearCookie("token");

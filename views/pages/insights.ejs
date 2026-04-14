@@ -1,93 +1,129 @@
-
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-  <div class="mb-6">
-    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Insights</h1>
-    <p class="text-slate-500 text-sm">Usage analysis and recommendations</p>
+<!-- ─── Header + Savings Banner ───────────────────────────────────────────── -->
+<% if (parseFloat(potentialSavings) > 0) { %>
+<div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 mb-5 rounded-2xl bg-gradient-to-r from-rose-50 to-amber-50 border border-rose-200 animate-fade-in-up">
+  <div class="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center flex-shrink-0">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.072 16.5c-.77.833.192 2.5 1.732 2.5z" />
+    </svg>
   </div>
-
-  <!-- AI Advisor -->
-  <div class="ai-glow rounded-lg p-5 mb-6">
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-md bg-brand-100 text-brand-600 flex items-center justify-center flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>
-        </div>
-        <div>
-          <h2 class="text-sm font-semibold text-slate-900">AI Advisor</h2>
-          <p class="text-xs text-slate-500">Get personalized savings suggestions powered by GPT</p>
-        </div>
-      </div>
-      <button onclick="getAiSuggestions()" id="aiBtn"
-        class="px-4 py-2 bg-brand-600 text-white text-sm font-semibold rounded-md hover:bg-brand-500 transition flex items-center gap-1.5 self-start sm:self-auto">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-        Get Suggestions
-      </button>
-    </div>
-    <div id="aiResults" class="hidden mt-4"></div>
+  <div class="flex-1">
+    <div class="text-xs font-semibold text-rose-800 uppercase tracking-wide mb-0.5">Potential Monthly Savings</div>
+    <div class="text-3xl font-extrabold text-rose-600 leading-tight">$<%= potentialSavings %><span class="text-base font-normal text-rose-400">/mo</span></div>
+    <div class="text-xs text-rose-600 mt-0.5">from unused subscriptions this month</div>
   </div>
+  <a href="/subscriptions" class="btn-primary px-4 py-2 text-white text-xs font-semibold rounded-xl flex-shrink-0">
+    Review All →
+  </a>
+</div>
+<% } %>
 
-  <% if (parseFloat(potentialSavings) > 0) { %>
-    <div class="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-6">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-rose-100 text-rose-600 rounded-md flex items-center justify-center flex-shrink-0">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.072 16.5c-.77.833.192 2.5 1.732 2.5z" /></svg>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-rose-800 uppercase tracking-wide">Potential Savings</div>
-          <div class="text-xl font-bold text-rose-600">$<%= potentialSavings %><span class="text-sm font-normal text-rose-500">/mo</span></div>
-        </div>
+<!-- ─── AI Advisor ─────────────────────────────────────────────────────────── -->
+<div class="ai-glow p-5 mb-5 animate-fade-in-up stagger-1">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-brand-500/25">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+        </svg>
+      </div>
+      <div>
+        <h2 class="text-sm font-bold text-slate-900">AI Savings Advisor</h2>
+        <p class="text-xs text-slate-500">GPT-4 analyzes your usage and recommends cuts</p>
       </div>
     </div>
-  <% } %>
-
-  <% if (insights.length > 0) { %>
-    <div class="space-y-3">
-      <% insights.forEach(function(item) { %>
-        <div class="bg-white rounded-lg border border-slate-200 p-4 card-hover">
-          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1.5">
-                <h3 class="text-sm font-semibold text-slate-900"><%= item.name %></h3>
-                <% item.flags.forEach(function(flag) { %>
-                  <% if (flag === 'unused') { %>
-                    <span class="badge-unused px-1.5 py-0.5 rounded text-xs font-medium">Unused</span>
-                  <% } else if (flag === 'low_usage') { %>
-                    <span class="badge-low-usage px-1.5 py-0.5 rounded text-xs font-medium">Low Usage</span>
-                  <% } else if (flag === 'high_cost_per_use') { %>
-                    <span class="badge-high-cost px-1.5 py-0.5 rounded text-xs font-medium">High Cost/Use</span>
-                  <% } %>
-                <% }) %>
-              </div>
-              <p class="text-slate-500 text-xs mb-2"><%= item.recommendation %></p>
-              <div class="flex gap-4 text-xs text-slate-400">
-                <span><%= item.category %></span>
-                <span>$<%= item.monthlyCost %>/mo</span>
-                <span><%= item.useCount %> uses</span>
-                <span>$<%= item.costPerUse === 'N/A' ? '—' : item.costPerUse %>/use</span>
-              </div>
-            </div>
-            <div class="flex gap-1.5">
-              <button onclick="logUsage('<%= item._id %>')"
-                class="px-3 py-1.5 text-xs font-medium bg-emerald-50 text-emerald-700 rounded hover:bg-emerald-100 transition">
-                Log Use
-              </button>
-              <a href="/usage/<%= item._id %>"
-                class="px-3 py-1.5 text-xs font-medium bg-slate-50 text-slate-600 rounded hover:bg-slate-100 transition">
-                History
-              </a>
-            </div>
-          </div>
-        </div>
-      <% }) %>
-    </div>
-  <% } else { %>
-    <div class="bg-white rounded-lg border border-slate-200 p-12 text-center">
-      <div class="text-emerald-400 mb-3">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-      </div>
-      <h3 class="text-sm font-semibold text-slate-600 mb-1">All subscriptions well-used</h3>
-      <p class="text-xs text-slate-400">No issues detected this month.</p>
-    </div>
-  <% } %>
+    <button onclick="getAiSuggestions()" id="aiBtn"
+      class="btn-primary px-4 py-2 text-white text-sm font-semibold rounded-xl flex items-center gap-2 self-start sm:self-auto">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+      </svg>
+      Get AI Suggestions
+    </button>
+  </div>
+  <div id="aiResults" class="hidden mt-4 pt-4 border-t border-brand-200/40"></div>
 </div>
 
+<!-- ─── Insight Cards ──────────────────────────────────────────────────────── -->
+<% if (insights.length > 0) { %>
+  <div class="mb-3 flex items-center gap-2">
+    <h3 class="text-sm font-bold text-slate-900">Usage Alerts</h3>
+    <span class="px-2 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200"><%= insights.length %></span>
+  </div>
+
+  <div class="space-y-3">
+    <% insights.forEach(function(item, i) { %>
+      <div class="insight-card <%= item.flags.includes('unused') ? 'unused' : item.flags.includes('low_usage') ? 'low' : 'high' %> animate-fade-in-up" style="animation-delay: <%= i * 0.06 %>s">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+          <!-- Left: info -->
+          <div class="flex-1">
+            <div class="flex items-center flex-wrap gap-2 mb-2">
+              <!-- Service initial -->
+              <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center text-slate-700 text-xs font-bold">
+                <%= item.name.charAt(0).toUpperCase() %>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900"><%= item.name %></h3>
+              <% item.flags.forEach(function(flag) { %>
+                <% if (flag === 'unused') { %>
+                  <span class="badge-unused px-2 py-0.5 rounded-full text-xs font-semibold">Unused</span>
+                <% } else if (flag === 'low_usage') { %>
+                  <span class="badge-low-usage px-2 py-0.5 rounded-full text-xs font-semibold">Low Usage</span>
+                <% } else if (flag === 'high_cost_per_use') { %>
+                  <span class="badge-high-cost px-2 py-0.5 rounded-full text-xs font-semibold">High Cost/Use</span>
+                <% } %>
+              <% }) %>
+            </div>
+
+            <p class="text-slate-600 text-xs leading-relaxed mb-3"><%= item.recommendation %></p>
+
+            <!-- Stats row -->
+            <div class="flex flex-wrap gap-3">
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                <span class="text-xs text-slate-500"><%= item.category %></span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-brand-500"></div>
+                <span class="text-xs font-semibold text-slate-700">$<%= item.monthlyCost %>/mo</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                <span class="text-xs text-slate-500"><%= item.useCount %> uses this month</span>
+              </div>
+              <% if (item.costPerUse !== 'N/A') { %>
+              <div class="flex items-center gap-1.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-rose-500"></div>
+                <span class="text-xs text-slate-500">$<%= item.costPerUse %>/use</span>
+              </div>
+              <% } %>
+            </div>
+          </div>
+
+          <!-- Right: actions -->
+          <div class="flex gap-2 flex-shrink-0">
+            <button onclick="logUsage('<%= item._id %>')"
+              class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition border border-emerald-200">
+              Log Use
+            </button>
+            <a href="/usage/<%= item._id %>"
+              class="px-3 py-1.5 text-xs font-semibold bg-slate-50 text-slate-600 rounded-lg hover:bg-slate-100 transition border border-slate-200">
+              History
+            </a>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+<% } else { %>
+  <!-- All clear state -->
+  <div class="card">
+    <div class="empty-state py-16">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <h3 class="text-sm font-bold text-slate-700 mb-1">All Good! 🎉</h3>
+      <p class="text-xs text-slate-400 text-center max-w-xs">No usage issues detected this month. Keep logging usage to maintain accurate insights.</p>
+    </div>
+  </div>
+<% } %>

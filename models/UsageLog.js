@@ -30,6 +30,14 @@ const usageLogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// ─── Indexes for query optimization ──────────────────────────────────────────
+usageLogSchema.index({ user: 1 });
+usageLogSchema.index({ subscription: 1 });
+usageLogSchema.index({ user: 1, date: -1 });
+usageLogSchema.index({ user: 1, action: 1 });
+usageLogSchema.index({ user: 1, subscription: 1, date: -1 });
+usageLogSchema.index({ subscription: 1, action: 1, date: -1 });
+
 const UsageLog = mongoose.model("UsageLog", usageLogSchema);
 
 export default UsageLog;

@@ -1,64 +1,86 @@
-<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-  <div class="flex items-center gap-3 mb-6">
-    <div>
-      <h1 class="text-xl font-bold text-slate-900 tracking-tight">Admin Panel</h1>
-      <p class="text-slate-500 text-sm">Manage users and roles</p>
-    </div>
-    <span class="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-medium rounded">Restricted</span>
+<!-- ─── Header ────────────────────────────────────────────────────────────── -->
+<div class="flex items-center gap-3 mb-5">
+  <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
   </div>
+  <div>
+    <p class="text-slate-500 text-sm"><%= users.length %> registered user<%= users.length !== 1 ? 's' : '' %></p>
+  </div>
+  <span class="ml-auto px-2.5 py-1 bg-amber-100 text-amber-800 text-xs font-bold rounded-full border border-amber-200">Admin Only</span>
+</div>
 
-  <% if (success) { %>
-    <div class="mb-4 p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-md"><%= success %></div>
-  <% } %>
+<% if (success) { %>
+  <div class="flex items-center gap-2.5 p-4 mb-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm rounded-xl animate-fade-in-up">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <%= success %>
+  </div>
+<% } %>
 
-  <div class="bg-white rounded-lg border border-slate-200 overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="text-left text-xs text-slate-500 uppercase tracking-wide bg-slate-50 border-b border-slate-200">
-            <th class="px-5 py-3 font-medium">User</th>
-            <th class="px-5 py-3 font-medium">Email</th>
-            <th class="px-5 py-3 font-medium text-center">Subscriptions</th>
-            <th class="px-5 py-3 font-medium text-center">Role</th>
-            <th class="px-5 py-3 font-medium text-right">Change Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% users.forEach(function(u) { %>
-            <tr class="border-b border-slate-50 table-row-alt hover:bg-slate-50 transition">
-              <td class="px-5 py-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold text-white uppercase"><%= u.name.charAt(0) %></div>
-                  <div>
-                    <span class="font-medium text-slate-800"><%= u.name %></span>
+<!-- ─── Users Table ─────────────────────────────────────────────────────── -->
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+    <table class="w-full table-modern">
+      <thead>
+        <tr>
+          <th class="text-left">User</th>
+          <th class="text-left hidden sm:table-cell">Email</th>
+          <th class="text-center hidden md:table-cell">Subscriptions</th>
+          <th class="text-center">Role</th>
+          <th class="text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(function(u, i) { %>
+          <tr class="animate-fade-in-up" style="animation-delay: <%= i * 0.04 %>s">
+            <td>
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center text-brand-700 text-sm font-bold flex-shrink-0">
+                  <%= u.name.charAt(0).toUpperCase() %>
+                </div>
+                <div>
+                  <div class="font-semibold text-slate-800 text-sm flex items-center gap-1.5">
+                    <%= u.name %>
                     <% if (u._id.toString() === user._id.toString()) { %>
-                      <span class="text-xs text-slate-400 ml-1">(you)</span>
+                      <span class="px-1.5 py-0.5 bg-brand-50 text-brand-600 text-[10px] font-bold rounded-full border border-brand-200">you</span>
                     <% } %>
                   </div>
+                  <div class="text-xs text-slate-400 sm:hidden"><%= u.email %></div>
                 </div>
-              </td>
-              <td class="px-5 py-3 text-slate-500"><%= u.email %></td>
-              <td class="px-5 py-3 text-center text-slate-700"><%= u.subCount %></td>
-              <td class="px-5 py-3 text-center">
-                <span class="px-2 py-0.5 rounded text-xs font-medium <%= u.role === 'admin' ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-600' %>"><%= u.role %></span>
-              </td>
-              <td class="px-5 py-3 text-right">
-                <% if (u._id.toString() === user._id.toString()) { %>
-                  <span class="text-xs text-slate-400">&mdash;</span>
-                <% } else { %>
-                  <form action="/admin/role/<%= u._id %>" method="POST" class="flex items-center justify-end gap-2">
-                    <select name="role" class="px-2 py-1 text-xs border border-slate-300 rounded-md bg-white">
-                      <option value="user" <%= u.role === 'user' ? 'selected' : '' %>>user</option>
-                      <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>admin</option>
-                    </select>
-                    <button type="submit" class="px-2.5 py-1 text-xs font-medium bg-brand-600 text-white rounded-md hover:bg-brand-500 transition">Update</button>
-                  </form>
+              </div>
+            </td>
+            <td class="hidden sm:table-cell text-slate-500 text-sm"><%= u.email %></td>
+            <td class="hidden md:table-cell text-center">
+              <span class="font-semibold text-slate-700"><%= u.subCount %></span>
+            </td>
+            <td class="text-center">
+              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                <%= u.role === 'admin' ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-slate-100 text-slate-600 border border-slate-200' %>">
+                <% if (u.role === 'admin') { %>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 <% } %>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
+                <%= u.role %>
+              </span>
+            </td>
+            <td>
+              <% if (u._id.toString() === user._id.toString()) { %>
+                <span class="text-xs text-slate-300 float-right">—</span>
+              <% } else { %>
+                <form action="/admin/role/<%= u._id %>" method="POST" class="flex items-center justify-end gap-2">
+                  <select name="role" class="form-input py-1.5 text-xs" style="width: auto; min-width: 80px;">
+                    <option value="user"  <%= u.role === 'user'  ? 'selected' : '' %>>User</option>
+                    <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                  </select>
+                  <button type="submit" class="btn-primary px-3 py-1.5 text-white text-xs font-semibold rounded-lg whitespace-nowrap">
+                    Update
+                  </button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
   </div>
 </div>

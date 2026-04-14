@@ -1,57 +1,119 @@
+<!-- ─── Header ────────────────────────────────────────────────────────────── -->
+<div class="mb-5">
+  <a href="/subscriptions" class="inline-flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-brand-600 transition mb-3">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+    Back to Subscriptions
+  </a>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-  <div class="mb-6">
-    <a href="/subscriptions" class="text-xs text-brand-600 hover:underline flex items-center gap-1 mb-2 font-medium">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-      Back
-    </a>
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center text-brand-700 text-xl font-bold">
+        <%= subscription.name.charAt(0).toUpperCase() %>
+      </div>
       <div>
         <h1 class="text-xl font-bold text-slate-900 tracking-tight"><%= subscription.name %></h1>
-        <div class="flex items-center gap-2 mt-1">
-          <span class="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-xs font-medium"><%= subscription.category %></span>
-          <span class="text-sm text-slate-500">$<%= subscription.cost.toFixed(2) %> / <%= subscription.billingCycle %></span>
+        <div class="flex items-center gap-2 mt-0.5">
+          <span class="cat-pill"><%= subscription.category %></span>
+          <span class="text-sm text-slate-500">
+            $<%= subscription.cost.toFixed(2) %> / <%= subscription.billingCycle %>
+          </span>
         </div>
       </div>
-      <button onclick="logUsage('<%= subscription._id %>')"
-        class="mt-3 sm:mt-0 px-4 py-2 bg-emerald-600 text-white text-sm font-semibold rounded-md hover:bg-emerald-500 transition">
-        Log Usage
-      </button>
     </div>
-  </div>
-
-  <div class="bg-white rounded-lg border border-slate-200">
-    <div class="px-5 py-4 border-b border-slate-100">
-      <h2 class="text-sm font-semibold text-slate-900">Usage History</h2>
-      <p class="text-xs text-slate-400 mt-0.5"><%= logs.length %> entries</p>
-    </div>
-
-    <% if (logs.length > 0) { %>
-      <div class="divide-y divide-slate-50">
-        <% logs.forEach(function(log) { %>
-          <div class="flex items-center justify-between px-5 py-3 hover:bg-slate-50 transition">
-            <div class="flex items-center gap-2.5">
-              <div class="w-2 h-2 rounded-full <%= log.action === 'used' ? 'bg-emerald-500' : 'bg-slate-300' %>"></div>
-              <span class="text-sm font-medium text-slate-700 capitalize"><%= log.action.replace('_', ' ') %></span>
-              <% if (log.notes) { %>
-                <span class="text-xs text-slate-400">— <%= log.notes %></span>
-              <% } %>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-slate-400"><%= new Date(log.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) %></span>
-              <button onclick="deleteUsageLog('<%= log._id %>')" class="text-slate-300 hover:text-rose-500 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-              </button>
-            </div>
-          </div>
-        <% }) %>
-      </div>
-    <% } else { %>
-      <div class="p-10 text-center text-slate-400 text-sm">
-        No usage recorded yet.
-        <button onclick="logUsage('<%= subscription._id %>')" class="text-brand-600 hover:underline font-medium ml-1">Log first use</button>
-      </div>
-    <% } %>
+    <button onclick="logUsage('<%= subscription._id %>')"
+      class="btn-primary px-4 py-2 text-white text-sm font-semibold rounded-xl flex items-center gap-2 self-start sm:self-auto">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      Log Usage
+    </button>
   </div>
 </div>
 
+<!-- ─── Stats row ─────────────────────────────────────────────────────────── -->
+<div class="grid grid-cols-3 gap-3 mb-5">
+  <%
+    const totalUses = logs.filter(l => l.action === 'used').length;
+    const totalLogs = logs.length;
+  %>
+  <div class="card p-4 text-center">
+    <div class="text-2xl font-extrabold text-slate-900"><%= totalLogs %></div>
+    <div class="text-xs text-slate-500 mt-1">Total Entries</div>
+  </div>
+  <div class="card p-4 text-center">
+    <div class="text-2xl font-extrabold text-emerald-600"><%= totalUses %></div>
+    <div class="text-xs text-slate-500 mt-1">Times Used</div>
+  </div>
+  <div class="card p-4 text-center">
+    <div class="text-2xl font-extrabold text-slate-900">
+      <%= totalUses > 0 ? '$' + (subscription.billingCycle === 'yearly' ? (subscription.cost/12) : subscription.cost / totalUses).toFixed(2) : '—' %>
+    </div>
+    <div class="text-xs text-slate-500 mt-1">Cost / Use</div>
+  </div>
+</div>
+
+<!-- ─── Usage History ─────────────────────────────────────────────────────── -->
+<div class="card overflow-hidden">
+  <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+    <div>
+      <h2 class="text-sm font-bold text-slate-900">Usage History</h2>
+      <p class="text-xs text-slate-400 mt-0.5"><%= logs.length %> entr<%= logs.length === 1 ? 'y' : 'ies' %></p>
+    </div>
+  </div>
+
+  <% if (logs.length > 0) { %>
+    <div>
+      <% logs.forEach(function(log, i) { %>
+        <div class="usage-entry animate-fade-in-up" style="animation-delay: <%= i * 0.04 %>s">
+          <div class="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center
+            <%= log.action === 'used' ? 'bg-emerald-50' : 'bg-slate-100' %>">
+            <% if (log.action === 'used') { %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            <% } else { %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+            <% } %>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="text-sm font-semibold text-slate-700 capitalize">
+              <%= log.action === 'used' ? 'Used' : 'Not Used' %>
+            </div>
+            <% if (log.notes) { %>
+              <div class="text-xs text-slate-400 truncate"><%= log.notes %></div>
+            <% } %>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-slate-400">
+              <%= new Date(log.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) %>
+            </span>
+            <button onclick="deleteUsageLog('<%= log._id %>')"
+              class="p-1 rounded text-slate-300 hover:text-rose-500 hover:bg-rose-50 transition"
+              title="Delete this entry">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } else { %>
+    <div class="empty-state py-16">
+      <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center mb-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-sm font-semibold text-slate-600 mb-1">No usage recorded yet</p>
+      <button onclick="logUsage('<%= subscription._id %>')"
+        class="text-brand-600 hover:underline text-xs font-semibold">
+        Log first use →
+      </button>
+    </div>
+  <% } %>
+</div>

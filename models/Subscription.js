@@ -31,6 +31,14 @@ const subscriptionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// ─── Indexes for query optimization ──────────────────────────────────────────
+subscriptionSchema.index({ user: 1 });
+subscriptionSchema.index({ user: 1, category: 1 });
+subscriptionSchema.index({ user: 1, billingCycle: 1 });
+subscriptionSchema.index({ user: 1, createdAt: -1 });
+subscriptionSchema.index({ user: 1, cost: 1 });
+subscriptionSchema.index({ name: "text" }, { weights: { name: 10, category: 5 } });
+
 const Subscription = mongoose.model("Subscription", subscriptionSchema);
 
 export default Subscription;

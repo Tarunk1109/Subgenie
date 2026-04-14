@@ -38,9 +38,10 @@ export const handleLogin = async (req, res) => {
 
   const token = generateToken(user._id);
   res.cookie("token", token, {
-    httpOnly: false,
+    httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
   res.redirect("/dashboard");
 };
@@ -74,9 +75,10 @@ export const handleRegister = async (req, res) => {
 
   const token = generateToken(user._id);
   res.cookie("token", token, {
-    httpOnly: false,
+    httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
   res.redirect("/dashboard");
 };
