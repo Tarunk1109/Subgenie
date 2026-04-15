@@ -500,6 +500,136 @@ function initBarChart(labels, values) {
   });
 }
 
+// ─── Chat Widget ─────────────────────────────────────────────────────────────
+
+let chatOpen = false;
+let chatPending = null; // { action, data } for multi-step flows
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const panel = document.getElementById("chat-panel");
+  const iconOpen  = document.getElementById("chat-icon-open");
+  const iconClose = document.getElementById("chat-icon-close");
+  if (!panel) return;
+
+  if (chatOpen) {
+    panel.classList.remove("chat-panel-hidden");
+    iconOpen.classList.add("hidden");
+    iconClose.classList.remove("hidden");
+    setTimeout(() => document.getElementById("chat-input")?.focus(), 50);
+    scrollChatToBottom();
+  } else {
+    panel.classList.add("chat-panel-hidden");
+    iconOpen.classList.remove("hidden");
+    iconClose.classList.add("hidden");
+  }
+}
+
+function scrollChatToBottom() {
+  const msgs = document.getElementById("chat-messages");
+  if (msgs) msgs.scrollTop = msgs.scrollHeight;
+}
+
+function appendMessage(text, role) {
+  const msgs = document.getElementById("chat-messages");
+  if (!msgs) return;
+  const div = document.createElement("div");
+  div.className = `chat-bubble ${role}`;
+  // Render **bold** markdown
+  div.innerHTML = text
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\n/g, "<br>");
+  msgs.appendChild(div);
+  scrollChatToBottom();
+  return div;
+}
+
+function showTyping() {
+  const msgs = document.getElementById("chat-messages");
+  if (!msgs) return null;
+  const div = document.createElement("div");
+  div.className = "chat-bubble typing";
+  div.innerHTML = "<span><i></i><i></i><i></i></span>";
+  msgs.appendChild(div);
+  scrollChatToBottom();
+  return div;
+}
+
+function clearChat() {
+  const msgs = document.getElementById("chat-messages");
+  if (!msgs) return;
+  msgs.innerHTML = "";
+  chatPending = null;
+  appendMessage("Chat cleared! How can I help?", "bot");
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("chat-send-btn");
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = "";
+  input.disabled = true;
+  if (sendBtn) sendBtn.disabled = true;
+
+  appendMessage(text, "user");
+  const typingEl = showTyping();
+
+  try {
+    let res, data;
+
+    // Multi-step pending action (delete confirm, awaiting cost)
+    if (chatPending) {
+      res = await fetch("/api/chat/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ action: chatPending.action, data: chatPending.data, message: text }),
+      });
+    } else {
+      res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ message: text }),
+      });
+    }
+
+    data = await res.json();
+    if (typingEl) typingEl.remove();
+
+    appendMessage(data.reply || "Sorry, I didn't get that.", "bot");
+
+    // Handle pending multi-step state
+    if (data.pendingAction) {
+      chatPending = { action: data.pendingAction, data: data.pendingData };
+    } else {
+      chatPending = null;
+    }
+
+    // Reload page if a subscription was added/deleted
+    if (data.reload) {
+      setTimeout(() => window.location.reload(), 1200);
+    }
+
+    // Redirect to another page
+    if (data.redirect) {
+      setTimeout(() => window.location.href = data.redirect, 1200);
+    }
+
+  } catch {
+    if (typingEl) typingEl.remove();
+    appendMessage("Network error. Try again.", "bot");
+    chatPending = null;
+  } finally {
+    input.disabled = false;
+    if (sendBtn) sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
 // ─── Init ────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {

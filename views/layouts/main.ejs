@@ -96,6 +96,48 @@
   <!-- Toast container -->
   <div id="toast-container"></div>
 
+  <!-- ─── AI Chat Widget ───────────────────────────────────────────────────── -->
+  <div id="chat-widget">
+    <button id="chat-toggle" onclick="toggleChat()" aria-label="Open AI assistant">
+      <svg id="chat-icon-open" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+      </svg>
+      <svg id="chat-icon-close" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div id="chat-panel" class="chat-panel-hidden">
+      <div class="chat-header">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="text-sm font-bold text-white leading-tight">SubGenie AI</div>
+            <div class="text-xs text-white/60 leading-tight">Always here to help</div>
+          </div>
+        </div>
+        <button onclick="clearChat()" title="Clear chat" class="text-white/50 hover:text-white transition text-xs font-medium">Clear</button>
+      </div>
+      <div id="chat-messages" class="chat-messages">
+        <div class="chat-bubble bot">
+          Hey! I'm your SubGenie assistant 👋<br>Talk to me naturally — log usage, add subscriptions, check your spending, anything!
+        </div>
+      </div>
+      <div class="chat-input-area">
+        <input id="chat-input" type="text" placeholder="Message SubGenie AI…" autocomplete="off"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}" maxlength="300"/>
+        <button onclick="sendChatMessage()" id="chat-send-btn" aria-label="Send">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script src="/js/main.js"></script>
   <script>
     function openSidebar() {

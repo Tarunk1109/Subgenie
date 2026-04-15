@@ -19,6 +19,7 @@ import subscriptionRoutes from "./routes/subscriptionRoutes.js";
 import usageLogRoutes from "./routes/usageLogRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import viewRoutes from "./routes/viewRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import { startBot } from "./bot/telegramBot.js";
@@ -129,6 +130,7 @@ app.use("/api/subscriptions", subscriptionRoutes);
 app.use("/api/usageLogs", usageLogRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/ai", aiRoutes);
+app.use("/api/chat", chatRoutes);
 
 // ─── View Routes ─────────────────────────────────────────────────────────────
 app.use("/", viewRoutes);
