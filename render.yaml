@@ -9,7 +9,7 @@ services:
       - key: NODE_ENV
         value: production
       - key: PORT
-        value: 10000
+        value: 8000
       - key: MONGO_URI
         sync: false
       - key: JWT_SECRET
