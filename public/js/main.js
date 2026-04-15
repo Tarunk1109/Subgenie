@@ -633,9 +633,9 @@ async function sendChatMessage() {
 // ─── Init ────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Apply service brand colors to all subscription avatars
   applyServiceBrands();
 
+  // Subscription form
   const subForm = document.getElementById("subscriptionForm");
   if (subForm) {
     subForm.addEventListener("submit", (e) => {
@@ -644,26 +644,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Close modal on backdrop click
+  // Close modals on backdrop click
   const modal = document.getElementById("subModal");
-  if (modal) {
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-  }
-  const altModal = document.getElementById("altModal");
-  if (altModal) {
-    altModal.addEventListener("click", (e) => {
-      if (e.target === altModal) altModal.classList.add("hidden");
-    });
-  }
+  if (modal) modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
 
-  // ESC key closes modals
+  const altModal = document.getElementById("altModal");
+  if (altModal) altModal.addEventListener("click", (e) => { if (e.target === altModal) altModal.classList.add("hidden"); });
+
+  // ESC closes modals
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeModal();
       const am = document.getElementById("altModal");
       if (am) am.classList.add("hidden");
+      // close chat too
+      if (chatOpen) toggleChat();
     }
   });
+
+  // ── Chat widget event listeners (no inline onclick) ──────────────────────
+  const chatToggle = document.getElementById("chat-toggle");
+  if (chatToggle) chatToggle.addEventListener("click", toggleChat);
+
+  const chatClearBtn = document.getElementById("chat-clear-btn");
+  if (chatClearBtn) chatClearBtn.addEventListener("click", clearChat);
+
+  const chatSendBtn = document.getElementById("chat-send-btn");
+  if (chatSendBtn) chatSendBtn.addEventListener("click", sendChatMessage);
+
+  const chatInput = document.getElementById("chat-input");
+  if (chatInput) {
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+  }
 });
