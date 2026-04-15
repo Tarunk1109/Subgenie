@@ -378,7 +378,14 @@ export function startBot() {
     return;
   }
 
-  bot = new TelegramBot(token, { polling: true });
+  bot = new TelegramBot(token, { polling: false });
+
+  // Kick out any lingering polling session before starting (fixes 409 on Render redeploy)
+  try {
+    await bot.deleteWebhook({ drop_pending_updates: true });
+  } catch (_) {}
+
+  bot.startPolling({ restart: false });
   console.log("Telegram bot started");
 
   // ── /start ──────────────────────────────────────────────────────────────

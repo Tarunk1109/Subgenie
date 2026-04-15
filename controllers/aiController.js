@@ -11,48 +11,46 @@ function getMonthStart() {
 }
 
 export const getAiSuggestions = async (req, res) => {
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(200).json({
-      error: "OpenAI API key not configured. Add OPENAI_API_KEY to your .env file.",
-    });
-  }
-
-  const userId = req.user._id.toString();
-  const cached = cache.get(userId);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    return res.status(200).json({ suggestions: cached.suggestions });
-  }
-
-  const monthStart = getMonthStart();
-  const subscriptions = await Subscription.find({ user: req.user._id });
-
-  if (subscriptions.length === 0) {
-    return res.status(200).json({ suggestions: [] });
-  }
-
-  const subData = await Promise.all(
-    subscriptions.map(async (sub) => {
-      const useCount = await UsageLog.countDocuments({
-        subscription: sub._id,
-        action: "used",
-        date: { $gte: monthStart },
-      });
-      const monthlyCost =
-        sub.billingCycle === "yearly" ? sub.cost / 12 : sub.cost;
-      return {
-        name: sub.name,
-        monthlyCost: Math.round(monthlyCost * 100) / 100,
-        category: sub.category,
-        billingCycle: sub.billingCycle,
-        usesThisMonth: useCount,
-        costPerUse: useCount > 0 ? Math.round((monthlyCost / useCount) * 100) / 100 : null,
-      };
-    })
-  );
-
-  const totalSpend = subData.reduce((s, d) => s + d.monthlyCost, 0);
-
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(200).json({
+        error: "OpenAI API key not configured.",
+      });
+    }
+
+    const userId = req.user._id.toString();
+    const cached = cache.get(userId);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      return res.status(200).json({ suggestions: cached.suggestions });
+    }
+
+    const monthStart = getMonthStart();
+    const subscriptions = await Subscription.find({ user: req.user._id });
+
+    if (subscriptions.length === 0) {
+      return res.status(200).json({ suggestions: [] });
+    }
+
+    const subData = await Promise.all(
+      subscriptions.map(async (sub) => {
+        const useCount = await UsageLog.countDocuments({
+          subscription: sub._id,
+          action: "used",
+          date: { $gte: monthStart },
+        });
+        const monthlyCost = sub.billingCycle === "yearly" ? sub.cost / 12 : sub.cost;
+        return {
+          name: sub.name,
+          monthlyCost: Math.round(monthlyCost * 100) / 100,
+          category: sub.category,
+          billingCycle: sub.billingCycle,
+          usesThisMonth: useCount,
+          costPerUse: useCount > 0 ? Math.round((monthlyCost / useCount) * 100) / 100 : null,
+        };
+      })
+    );
+
+    const totalSpend = subData.reduce((s, d) => s + d.monthlyCost, 0);
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await openai.chat.completions.create({
@@ -81,47 +79,46 @@ export const getAiSuggestions = async (req, res) => {
     }
 
     cache.set(userId, { suggestions, timestamp: Date.now() });
-
     res.status(200).json({ suggestions });
   } catch (err) {
-    console.error("OpenAI error:", err.message);
+    console.error("OpenAI suggestions error:", err.message);
     res.status(200).json({
-      error: "Failed to get AI suggestions. Check your API key and billing.",
+      error: `AI request failed: ${err.message}`,
     });
   }
 };
 
 export const getAlternatives = async (req, res) => {
-  if (!process.env.OPENAI_API_KEY) {
-    return res.status(200).json({
-      error: "OpenAI API key not configured. Add OPENAI_API_KEY to your .env file.",
-    });
-  }
-
-  const sub = await Subscription.findOne({
-    _id: req.params.id,
-    user: req.user._id,
-  });
-
-  if (!sub) {
-    return res.status(404).json({ error: "Subscription not found" });
-  }
-
-  const monthStart = getMonthStart();
-  const useCount = await UsageLog.countDocuments({
-    subscription: sub._id,
-    action: "used",
-    date: { $gte: monthStart },
-  });
-
-  const monthlyCost = sub.billingCycle === "yearly" ? sub.cost / 12 : sub.cost;
-  const cacheKey = `alt_${sub._id}`;
-  const cached = cache.get(cacheKey);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
-    return res.status(200).json(cached.data);
-  }
-
   try {
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(200).json({
+        error: "OpenAI API key not configured.",
+      });
+    }
+
+    const sub = await Subscription.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!sub) {
+      return res.status(404).json({ error: "Subscription not found" });
+    }
+
+    const monthStart = getMonthStart();
+    const useCount = await UsageLog.countDocuments({
+      subscription: sub._id,
+      action: "used",
+      date: { $gte: monthStart },
+    });
+
+    const monthlyCost = sub.billingCycle === "yearly" ? sub.cost / 12 : sub.cost;
+    const cacheKey = `alt_${sub._id}`;
+    const cached = cache.get(cacheKey);
+    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+      return res.status(200).json(cached.data);
+    }
+
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await openai.chat.completions.create({
@@ -171,7 +168,7 @@ export const getAlternatives = async (req, res) => {
   } catch (err) {
     console.error("OpenAI alternatives error:", err.message);
     res.status(200).json({
-      error: "Failed to find alternatives. Check your API key.",
+      error: `AI request failed: ${err.message}`,
     });
   }
 };
