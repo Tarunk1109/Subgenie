@@ -118,7 +118,7 @@ app.set("layout", "layouts/main");
 // ─── Static Files ────────────────────────────────────────────────────────────
 app.use(
   express.static(path.join(__dirname, "public"), {
-    maxAge: process.env.NODE_ENV === "production" ? "7d" : 0,
+    maxAge: 0,
     etag: true,
   })
 );
