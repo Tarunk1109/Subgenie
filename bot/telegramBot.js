@@ -371,7 +371,7 @@ async function handleConversationState(chatId, user, text, state) {
   return null;
 }
 
-export function startBot() {
+export async function startBot() {
   const token = process.env.TELEGRAM_BOT_TOKEN;
   if (!token) {
     console.log("TELEGRAM_BOT_TOKEN not set — bot disabled");
