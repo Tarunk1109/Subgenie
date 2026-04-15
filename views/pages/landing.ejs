@@ -19,13 +19,13 @@
 
       <!-- Headline -->
       <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1] animate-fade-in-up stagger-1">
-        Stop paying for<br/>
-        subscriptions you <span class="gradient-text">never use</span>
+        Stop wasting money<br/>
+        on subscriptions you <span class="gradient-text">forgot about</span>
       </h1>
 
       <!-- Subtext -->
       <p class="mt-6 text-base sm:text-lg text-slate-400 max-w-xl mx-auto leading-relaxed animate-fade-in-up stagger-2">
-        Track every subscription, log real usage, and let AI identify exactly what to cancel.
+        See exactly where your money is going...and what to cancel instantly.
         The average user finds <span class="text-white font-semibold">$43/month</span> in unused services.
       </p>
 
@@ -37,7 +37,7 @@
           </a>
         <% } else { %>
           <a href="/register" class="btn-primary px-8 py-3.5 text-white font-bold rounded-xl text-sm shadow-2xl shadow-brand-500/25">
-            Get Started Free →
+            Start Saving Money →
           </a>
           <a href="/login" class="px-8 py-3.5 bg-white/5 text-slate-300 font-semibold rounded-xl border border-white/10 hover:bg-white/10 hover:border-white/20 transition-all text-sm backdrop-blur-sm">
             Sign In
@@ -177,6 +177,62 @@
           <p class="text-xs text-slate-400 leading-relaxed"><%= f.body %></p>
         </div>
       <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- ─── Testimonials ───────────────────────────────────────────────────────── -->
+<section class="py-20 bg-white relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-14">
+      <p class="text-xs font-bold text-brand-600 uppercase tracking-widest mb-3">Testimonials</p>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+        People are already saving more with SubGenie
+      </h2>
+      <p class="text-slate-500 text-sm mt-3 max-w-2xl mx-auto">
+        Real users are cutting waste, tracking smarter, and finally seeing where their subscription money goes.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-solid p-7 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center gap-1 mb-4 text-amber-400 text-sm">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-6">
+          “I didn’t realize how many subscriptions were quietly draining my account. SubGenie helped me spot three I hadn’t used in months.”
+        </p>
+        <div>
+          <p class="text-sm font-bold text-slate-900">Sarah K.</p>
+          <p class="text-xs text-slate-500">Freelance Designer</p>
+        </div>
+      </div>
+
+      <div class="card-solid p-7 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center gap-1 mb-4 text-amber-400 text-sm">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-6">
+          “The usage tracking is my favorite part. It showed me I was paying for tools I only opened once or twice a month.”
+        </p>
+        <div>
+          <p class="text-sm font-bold text-slate-900">David R.</p>
+          <p class="text-xs text-slate-500">Startup Founder</p>
+        </div>
+      </div>
+
+      <div class="card-solid p-7 rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="flex items-center gap-1 mb-4 text-amber-400 text-sm">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <p class="text-sm text-slate-600 leading-relaxed mb-6">
+          “It feels like having a smart assistant for my subscriptions. The AI suggestions made it obvious what to cancel first.”
+        </p>
+        <div>
+          <p class="text-sm font-bold text-slate-900">Melissa T.</p>
+          <p class="text-xs text-slate-500">Marketing Manager</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
