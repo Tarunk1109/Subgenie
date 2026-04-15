@@ -46,6 +46,19 @@ If the bot can't understand a message, it falls back with specific examples.
 
 ---
 
+## Database
+
+SubGenie uses **MongoDB Atlas** (cloud-hosted NoSQL) with **Mongoose** as the ODM. There are four collections:
+
+- **Users** — account info (name, email, hashed password, role)
+- **Subscriptions** — each service a user tracks (name, cost, category, billing cycle)
+- **UsageLogs** — every usage event logged against a subscription (date, action, notes)
+- **TelegramUsers** — maps a Telegram chat ID to a SubGenie account, stores reminder preference
+
+Subscriptions and UsageLogs reference the User document by ObjectId, so all data is scoped per user. Mongoose indexes are set on frequently queried fields (user, category, cost) to keep queries fast.
+
+---
+
 ## Tech Stack
 
 | Layer | Tech |
