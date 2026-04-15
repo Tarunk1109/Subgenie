@@ -153,6 +153,9 @@ All endpoints require `Authorization: Bearer <token>` unless marked public.
 
 ---
 
+
+## Live Site link: https://subgenie-kxru.onrender.com/
+
 ## License
 
 Academic / educational project.
